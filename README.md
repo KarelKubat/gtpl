@@ -51,7 +51,7 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/02 14:02:59 gtpl: This generates one log statement
+2023/04/02 14:05:28 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.1
 ```
 ### Example: examples/01-types.tpl
