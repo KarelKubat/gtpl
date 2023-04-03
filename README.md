@@ -77,7 +77,7 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/03 15:37:01 gtpl: This generates one log statement
+2023/04/03 15:40:53 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.1
 ```
 ### Example: examples/01-types.tpl
@@ -143,6 +143,7 @@ This template is processed by gtpl version 0.0.1
       list        - creates a list
       addelements - creates a new list by adding elements
       haselement  - checks whether an element is in the list
+      indexof     - returns the index of an element
     Also standard built ins:
       slice       - how to get a partial list from a list          
       index       - how to get one element from a list
