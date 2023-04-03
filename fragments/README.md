@@ -2,16 +2,16 @@
 
 `gtpl` is a generic (Go-style) template parser that allows one to expand templates. `gtpl` prepares a number of handy functions that can be used in your templates, such as: maps management, lists, types.
 
-I wrote `gtpl` because in some situations I have configuration files with a lot of boilerplate and just small variants for different cases. Typing out such configuration files is
+I wrote `gtpl` because in some situations I have configuration files with a lot of boilerplate and just small variants for different cases. Typing out such configuration files is:
 
 - Toily, who wants to type almost the same thing 100 times.
 - Error prone, what if you forget just one field in a sub-block.
 - Hard to maintain, what if a sub-block suddenly needs another field. You need to go back and add that field to a hundred already existing sub-blocks.
 
 Sounds familiar? `gtpl` to the rescue.
-- It lets you define a template with a things to do, such as settings expressed in lists (arrras), or maps (dicts)
-- It expands such templates into a target configuration file
-- You can collect some "globals" settings and apply them to different cases. `gtpl` will happily run:
+- It lets you define a template with a things to do, such as settings expressed in lists (arrrays), or maps (dicts).
+- It expands such templates into a target configuration file.
+- You can collect some "global" settings and apply them to different cases. `gtpl` will happily run:
 
     ```shell
     # assume common.tpl holds settings for both cases
@@ -42,3 +42,4 @@ gtpl FILE1 FILE2 [FILE3...]
 - Would you like to see all supported flags and the usage? Try `gtpl -h`.
 - Would you like to see what builtins `gtpl` offers? Try `gtlp -b`.
 - Do you dislike the action delimiters in template files, which default to `{{` and `}}`? Try `gtpl -left` and `gtpl -right`.
+- See `gtpl -h` for a full overview.
