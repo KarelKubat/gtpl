@@ -1,11 +1,14 @@
 {{/*
     Demo of:
-        type     - type of its argument: "int", "float", "number", "list", "map"
-        isint    - true for integers
-        isfloat  - true for floating point numbers
-        isnumber - true for floats or ints
-        islist   - true for lists
-        ismap    - true for maps
+        list, map - constructions, see next sections
+        type      - type of its argument: "int", "float", "number", "list", "map"
+        isint     - true for integers
+        isfloat   - true for floating point numbers
+        isnumber  - true for floats or ints
+        islist    - true for lists
+        ismap     - true for maps
+    Also standard built ins:
+        range    - how to loop over a list
 */}}
 
 {{ $variants := list 

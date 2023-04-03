@@ -1,3 +1,14 @@
+{{/*
+  Demo of:
+    expander - the name of the expander program
+    version  - its version
+    log      - logging information
+    assert   - ensuring that a condition is met
+    die      - how to abort a run
+  Also:
+    comments - you can't have spaces between the template and comment delimiters
+*/}}
+
 This template is processed by {{ expander }} version {{ version }}
 
 {{ log "This generates " "one" " log statement" }}

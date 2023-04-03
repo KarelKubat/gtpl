@@ -4,8 +4,8 @@
       addelements - creates a new list by adding elements
       haselement  - checks whether an element is in the list
     Also standard built ins:
-      slice
-      index
+      slice       - how to get a partial list from a list          
+      index       - how to get one element from a list
 */}}
 
 {{- $list := list "one" "two" "three" -}}

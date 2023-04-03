@@ -1,8 +1,8 @@
 {{/*
     Demo of:
-        map - creates a map
+        map   - creates a map
     Also standard built ins:
-        range
+        range - ranging key,value pairs over a map
 */}}
 
 {{ $lyrics := map

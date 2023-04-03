@@ -6,9 +6,9 @@
       setkeyval - adds a key/value pair to a map
       assert    - ensures that a condition is true
     Also standard built ins:
-      define
-      template
-      range
+      define    - defining a template
+      template  - calling a template
+      range     - iterating key/value pairs over a map
 */}}
 
 {{ 
@@ -46,3 +46,5 @@ Eve is not listed as a party yet. Let's add her.
                 "isAttacker" true) }}
 {{ assert (haskey $parties "Eve") "Eve must now be known as a party." }}
 {{ end }}
+Name: Eve
+{{ template "showParty" (getval $parties "Eve") }}
