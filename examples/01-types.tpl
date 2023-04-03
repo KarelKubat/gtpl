@@ -11,6 +11,13 @@
         range    - how to loop over a list
 */}}
 
+{{/* 
+  A few type variants: int, float, list, map. The variants themselves are wrapped
+  in a list. The map is created using sequential arguments, so 
+    key1 val1 key2 val2
+  etc.. There is no syntax to express 
+    key1: val1, key2: val2 // or key1 -> val1, key2 -> val2 whatever
+*/}}
 {{ $variants := list 
     42 
     3.14

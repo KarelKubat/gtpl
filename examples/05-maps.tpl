@@ -37,7 +37,7 @@ Name: {{ $name }}
 {{ template "showParty" $data }}
 {{ end }}
 
-Alice {{ if haskey $parties "Alice" }} occurs {{ else }} doesn't occur {{ end }} in the map as a party.
+Alice {{ if haskey $parties "Alice" }} occurs {{ else }} doesn't occur {{ end }} in the map.
 
 {{ if not (haskey $parties "Eve") }}
 Eve is not listed as a party yet. Let's add her.

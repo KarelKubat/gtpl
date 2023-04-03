@@ -77,7 +77,7 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/03 02:37:52 gtpl: This generates one log statement
+2023/04/03 02:47:15 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.1
 ```
 ### Example: examples/01-types.tpl
@@ -96,6 +96,13 @@ This template is processed by gtpl version 0.0.1
         range    - how to loop over a list
 */}}
 
+{{/* 
+  A few type variants: int, float, list, map. The variants themselves are wrapped
+  in a list. The map is created using sequential arguments, so 
+    key1 val1 key2 val2
+  etc.. There is no syntax to express 
+    key1: val1, key2: val2 // or key1 -> val1, key2 -> val2 whatever
+*/}}
 {{ $variants := list 
     42 
     3.14
@@ -245,7 +252,7 @@ Name: {{ $name }}
 {{ template "showParty" $data }}
 {{ end }}
 
-Alice {{ if haskey $parties "Alice" }} occurs {{ else }} doesn't occur {{ end }} in the map as a party.
+Alice {{ if haskey $parties "Alice" }} occurs {{ else }} doesn't occur {{ end }} in the map.
 
 {{ if not (haskey $parties "Eve") }}
 Eve is not listed as a party yet. Let's add her.
@@ -270,7 +277,7 @@ Name: Bob
 Name: Mallory
   Role: man in the middle
   Attacker: true
-Alice  occurs  in the map as a party.
+Alice  occurs  in the map.
 Eve is not listed as a party yet. Let's add her.
 Name: Eve
   Role: another attacker
