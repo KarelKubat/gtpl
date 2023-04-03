@@ -7,9 +7,10 @@ open(my $srcf, $ARGV[0]) or die;
 my $file_content = do { local $/; <$srcf> };
 close($srcf) or die;
 
-open(my $gtplf, "go run gtpl.go -re $ARGV[0] 2>&1 |") or die;
+my $cmd = "go run gtpl.go -re $ARGV[0]";
+open(my $gtplf, "$cmd 2>&1 |") or die;
 my $expanded_content = do { local $/; <$gtplf> };
-close($gtplf) or die;
+close($gtplf) or die ("$cmd failed: $expanded_content");
 
 print(
     "### Example: $ARGV[0]\n\n",
