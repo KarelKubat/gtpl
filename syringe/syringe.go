@@ -92,6 +92,12 @@ func New(o *Opts) *Syringe {
 			usage:     `{{if (haselement $list "a")}} 'a' occurs in the list {{end}}`,
 		},
 		{
+			function:  s.IndexOf,
+			longname:  ".Gtpl.IndexOf",
+			shortname: "indexof",
+			usage:     `'a' occurs at index {{ indexof $list "a" }} in the list`,
+		},
+		{
 			function:  s.AddElements,
 			longname:  ".Gtpl.AddElements",
 			shortname: "addelements",
@@ -246,6 +252,16 @@ func (s *Syringe) HasElement(list []interface{}, el interface{}) bool {
 		}
 	}
 	return false
+}
+
+// IndexOf returns the index of an element in a list, or -1.
+func (s *Syringe) IndexOf(list []interface{}, el interface{}) int {
+	for i, e := range list {
+		if e == el {
+			return i
+		}
+	}
+	return -1
 }
 
 // AddElements is the builtin that adds elements to a list.

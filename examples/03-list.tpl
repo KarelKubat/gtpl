@@ -12,6 +12,7 @@
 The list so far: {{ $list }}
 The first two elements are: {{ slice $list 0 2 }}
 The second element is {{ index $list 1}}
+Element "three" occurs at index {{ indexof $list "three" }}
 
 Let's add "four" and "five".
 {{- $list = addelements $list "four" "five" }}

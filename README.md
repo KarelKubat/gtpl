@@ -77,7 +77,7 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/03 02:55:07 gtpl: This generates one log statement
+2023/04/03 15:37:01 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.1
 ```
 ### Example: examples/01-types.tpl
@@ -152,6 +152,7 @@ This template is processed by gtpl version 0.0.1
 The list so far: {{ $list }}
 The first two elements are: {{ slice $list 0 2 }}
 The second element is {{ index $list 1}}
+Element "three" occurs at index {{ indexof $list "three" }}
 
 Let's add "four" and "five".
 {{- $list = addelements $list "four" "five" }}
@@ -170,6 +171,7 @@ I've got {{ range $sense := $list }}{{ $sense }} {{ end }}senses working overtim
 The list so far: [one two three]
 The first two elements are: [one two]
 The second element is two
+Element "three" occurs at index 2
 Let's add "four" and "five".
 I've got one two three four five senses working overtime.
   "five" is in the list
@@ -311,6 +313,9 @@ list (long name: .Gtpl.List)
 
 haselement (long name: .Gtpl.HasElement)
   {{if (haselement $list "a")}} 'a' occurs in the list {{end}}
+
+indexof (long name: .Gtpl.IndexOf)
+  'a' occurs at index {{ indexof $list "a" }} in the list
 
 addelements (long name: .Gtpl.AddElements)
   {{$newlist := (addelements $list "d" "e")}} - creates a new list with added element
