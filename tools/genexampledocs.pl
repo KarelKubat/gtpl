@@ -12,7 +12,7 @@ print(
     "## Examples\n\n",
     "See also `examples/*tpl`.\n\n");
 
-my @tpls = glob("examples/*tpl");
+my @tpls = sort(glob("examples/*tpl"));
 die("no example files") unless ($#tpls >= 0);
 for my $f (@tpls) {
     system("tools/genexampledoc.pl $f") and die;
