@@ -37,13 +37,17 @@ func TestExpanderAndVersion(t *testing.T) {
 	}
 }
 
-func TestList(t *testing.T) {
+func TestListIsList(t *testing.T) {
 	s := New(&Opts{Expander: expanderName, Version: versionID})
 	l := s.List(0, 1, 2, 3, 4)
 	for i, e := range l {
 		if interface{}(reflect.ValueOf(e).Interface()) != i {
 			t.Errorf("List(): value at index %v is %v, type %v", i, reflect.ValueOf(e), reflect.TypeOf(e))
 		}
+	}
+	v := reflect.ValueOf(l)
+	if v.Kind() != reflect.Array && v.Kind() != reflect.Slice {
+		t.Errorf("List(...) is a %v, want reflect.Array or reflect.Slice", v.Kind())
 	}
 }
 
@@ -81,4 +85,90 @@ func TestAddElements(t *testing.T) {
 			t.Errorf("after AddElments(%v, 4, 5): at index %v = %v, want %v", l0, i, e, i)
 		}
 	}
+}
+
+func TestMapIsMap(t *testing.T) {
+	s := New(&Opts{Expander: expanderName, Version: versionID})
+	m := s.Map(0, "zero", 1, "one", 2, "two", 3, "three")
+	v := reflect.ValueOf(m)
+	if v.Kind() != reflect.Map {
+		t.Errorf("Map(...) is a %v, want reflect.Map", v.Kind())
+	}
+}
+
+func TestHasKey(t *testing.T) {
+	s := New(&Opts{Expander: expanderName, Version: versionID})
+	m := s.Map(0, "zero", 1, "one", 2, "two", 3, "three")
+	for _, test := range []struct {
+		key        int
+		wantHasKey bool
+	}{
+		{
+			key:        0,
+			wantHasKey: true,
+		},
+		{
+			key:        4,
+			wantHasKey: false,
+		},
+	} {
+		if got := s.HasKey(m, test.key); got != test.wantHasKey {
+			t.Errorf("HasKey(%v, %v) = %v, want %v", m, test.key, got, test.wantHasKey)
+		}
+	}
+}
+
+func TestGetAndSetVal(t *testing.T) {
+	s := New(&Opts{Expander: expanderName, Version: versionID})
+	m := s.Map(0, "zero", 1, "one", 2, "two", 3, "three")
+	for _, test := range []struct {
+		key     int
+		wantVal string
+	}{
+		{
+			key:     0,
+			wantVal: "zero",
+		},
+		{
+			key:     1,
+			wantVal: "one",
+		},
+		{
+			key:     4,
+			wantVal: "",
+		},
+		{
+			key:     42,
+			wantVal: "",
+		},
+	} {
+		if v := reflect.ValueOf(s.GetVal(m, test.key)); v.String() != test.wantVal {
+			t.Errorf("Getval(%v, %v) = %v, want %v", m, test.key, v.String(), test.wantVal)
+		}
+	}
+
+	fortyTwoString := "forty two"
+	s.SetKeyVal(m, 42, fortyTwoString)
+	if v := reflect.ValueOf(s.GetVal(m, 42)); v.String() != fortyTwoString {
+		t.Errorf("Getval(%v, 42) = %v, want %v", m, v.String(), fortyTwoString)
+	}
+}
+
+func TestIsKind(t *testing.T) {
+	s := New(&Opts{Expander: expanderName, Version: versionID})
+	for _, test := range []struct {
+		v    interface{}
+		want string
+	}{
+		{12, intString},
+		{3.14, floatString},
+		{[]string{"a", "b"}, listString},
+		{[]int{1, 2, 3}, listString},
+		{map[string]string{"a": "b"}, mapString},
+	} {
+		if got := s.Type(test.v); got != test.want {
+			t.Errorf("Type(%v) = %q, want %q", test.v, got, test.want)
+		}
+	}
+
 }
