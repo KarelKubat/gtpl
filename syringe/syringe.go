@@ -305,7 +305,7 @@ func (s *Syringe) AddElements(list []interface{}, els ...interface{}) []interfac
 /* Map related */
 
 // Map is the builtin that returns a map.
-func (s *Syringe) Map(args ...interface{}) interface{} {
+func (s *Syringe) Map(args ...interface{}) map[interface{}]interface{} {
 	out := map[interface{}]interface{}{}
 	for i := 0; i < len(args); i += 2 {
 		out[args[i]] = args[i+1]
