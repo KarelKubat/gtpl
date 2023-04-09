@@ -9,9 +9,8 @@
     comments - you can't have spaces between the template and comment delimiters
 */}}
 
-This template is processed by {{ expander }} version {{ version }}
-
 {{ log "This generates " "one" " log statement" }}
+This template is processed by {{ expander }} version {{ version }}
 
 {{ $answer := 42 }}
 {{/* abort if it isn't 42 */}}

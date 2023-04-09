@@ -61,9 +61,8 @@ See also `examples/*tpl`.
     comments - you can't have spaces between the template and comment delimiters
 */}}
 
-This template is processed by {{ expander }} version {{ version }}
-
 {{ log "This generates " "one" " log statement" }}
+This template is processed by {{ expander }} version {{ version }}
 
 {{ $answer := 42 }}
 {{/* abort if it isn't 42 */}}
@@ -77,7 +76,7 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/03 15:40:53 gtpl: This generates one log statement
+2023/04/09 08:06:56 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.1
 ```
 ### Example: examples/01-types.tpl
@@ -135,6 +134,31 @@ This template is processed by gtpl version 0.0.1
 42 is  not  a list
 42 is  not  a map
 ```
+### Example: examples/02-arith.tpl
+
+```
+{{/*
+  Demo of:
+    add - adds two numbers
+    sub - subtracts the second number from the first one
+    mul - multiplies two numbers
+    div - divides the first number by the second one
+*/}}
+
+12 + 3 = {{ add 12 3 }}
+12 - 3 = {{ sub 12 3 }}
+12 * 3 = {{ mul 12 3 }}
+12 / 3 = {{ div 12 3 }}
+```
+
+**Output** (empty lines removed):
+
+```
+12 + 3 = 15
+12 - 3 = 9
+12 * 3 = 36
+12 / 3 = 4
+```
 ### Example: examples/03-list.tpl
 
 ```
@@ -145,12 +169,14 @@ This template is processed by gtpl version 0.0.1
       haselement  - checks whether an element is in the list
       indexof     - returns the index of an element
     Also standard built ins:
+      len         - returns the length of a list
       slice       - how to get a partial list from a list          
       index       - how to get one element from a list
 */}}
 
-{{- $list := list "one" "two" "three" -}}
+{{ $list := list "one" "two" "three" }}
 The list so far: {{ $list }}
+It has {{ len $list }} elements.
 The first two elements are: {{ slice $list 0 2 }}
 The second element is {{ index $list 1}}
 Element "three" occurs at index {{ indexof $list "three" }}
@@ -170,6 +196,7 @@ I've got {{ range $sense := $list }}{{ $sense }} {{ end }}senses working overtim
 
 ```
 The list so far: [one two three]
+It has 3 elements.
 The first two elements are: [one two]
 The second element is two
 Element "three" occurs at index 2
@@ -289,52 +316,93 @@ Name: Eve
   Role: another attacker
   Attacker: true
 ```
+### Example: examples/06-fibo.tpl
+
+```
+{{/*
+  Demo of:
+    loop - shorthand for a list of consecutive ints
+    add  - adds two numbers
+  Also standard built ins:
+    range
+*/}}
+
+Fibonacci series
+
+{{ $a := 1 }}
+{{ $b := 2 }}
+
+{{/* `loop 1 11` is a shorthand for `list 1 2 3 4 5 6 7 8 9 10` */}}
+{{/* That means "up to 11", not "and including". */}}
+{{ range $i := loop 1 11 }}
+  Number {{ $i }}: {{ $a }}
+  {{ $tmp := $a }}
+  {{ $a = $b }}
+  {{ $b = add $tmp $b }}
+{{ end }}
+```
+
+**Output** (empty lines removed):
+
+```
+Fibonacci series
+  Number 1: 1
+  Number 2: 2
+  Number 3: 3
+  Number 4: 5
+  Number 5: 8
+  Number 6: 13
+  Number 7: 21
+  Number 8: 34
+  Number 9: 55
+  Number 10: 89
+```
 ## List of Built in Functions
 
 The list can be generated using `gtpl -b`.
 
 ```
 expander (long name: .Gtpl.Expander)
-  {{expander}} - the name of this template expander
+  {{ expander }} - the name of this template expander
 
 version (long name: .Gtpl.Version)
-  {{version}} - the version of this template expander
+  {{ version }} - the version of this template expander
 
 log (long name: .Gtpl.Log)
-  {{log "some" "info"}} - sends args to the log
+  {{ log "some" "info" }} - sends args to the log
 
 die (long name: .Gtpl.Die)
-  {{die "some" "info"}} - prints args, logs them if logging was used, stops
+  {{ die "some" "info" }} - prints args, logs them if logging was used, stops
 
 assert (long name: .Gtpl.Assert)
-  asserts a condition and stops if not met: {{$len := len $list}}{{assert ($len gt 0) "list is empty!"}}
+  asserts a condition and stops if not met: {{ assert (len $list) gt 0) "list is empty!" }}
 
 list (long name: .Gtpl.List)
-  {{$list := list "a" "b" "c"}} - creates a list
+  {{ $list := list "a" "b" "c" }} - creates a list
 
 haselement (long name: .Gtpl.HasElement)
-  {{if (haselement $list "a")}} 'a' occurs in the list {{end}}
+  {{ if (haselement $list "a") }} 'a' occurs in the list {{ end }}
 
 indexof (long name: .Gtpl.IndexOf)
   'a' occurs at index {{ indexof $list "a" }} in the list
 
 addelements (long name: .Gtpl.AddElements)
-  {{$newlist := (addelements $list "d" "e")}} - creates a new list with added element
+  {{ $newlist := (addelements $list "d" "e") }} - creates a new list with added element
 
 map (long name: .Gtpl.Map)
-  {{$map := map "cat" "meow" "dog" "woof"}} - creates a map
+  {{ $map := map "cat" "meow" "dog" "woof" }} - creates a map
 
 haskey (long name: .Gtpl.HasKey)
-  {{if haskey $map "cat"}} yes {{else}} no {{end}} - tests whether a key is in a map
+  {{ if haskey $map "cat" }} yes {{ else }} no {{ end }} - tests whether a key is in a map
 
 getval (long name: .Gtpl.GetVal)
-  a cat says {{get $map "cat"}} - gets a value from a map, "" if absent
+  a cat says {{ get $map "cat" }} - gets a value from a map, "" if absent
 
 setkeyval (long name: .Gtpl.SetKeyVal)
-  {{set $map "frog" "ribbit"}} - adds a key/value pair to a map
+  {{ set $map "frog" "ribbit" }} - adds a key/value pair to a map
 
 type (long name: .Gtpl.Type)
-  expands to "int", "float", "list" or "map": {{$t := type $map}} {{if $t ne "map"}} something is very wrong {{end}}
+  expands to "int", "float", "list" or "map": {{ $t := type $map }} {{ if $t ne "map" }} something is very wrong {{ end }}
 
 isint (long name: .Gtpl.IsInt)
   true when its argument is an integer
@@ -350,5 +418,20 @@ islist (long name: .Gtpl.IsList)
 
 ismap (long name: .Gtpl.IsMap)
   true when its argument is a map
+
+add (long name: .Gtpl.Add)
+  21 + 21 is {{ add (21 21) }}
+
+sub (long name: .Gtpl.Sub)
+  42 - 2 = {{ sub 42 2}}
+
+mul (long name: .Gtpl.Mul)
+  7 * 4 = {{ mul 7 4 }}
+
+div (long name: .Gtpl.Div)
+  42 / 4 = {{ div 42 4 }}
+
+loop (long name: .Gtpl.Loop)
+  1 up to and including 10: {{ range $i := loop 1 11 }} {{ $i }} {{ end }}
 
 ```
