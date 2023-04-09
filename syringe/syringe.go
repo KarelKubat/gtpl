@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"sort"
 	"strings"
 	"text/template"
 )
@@ -200,6 +201,10 @@ func New(o *Opts) *Syringe {
 			usage:     `1 up to and including 10: {{ range $i := loop 1 11 }} {{ $i }} {{ end }}`,
 		},
 	}
+	sort.Slice(s.builtins, func(i, j int) bool {
+		return s.builtins[i].shortname < s.builtins[j].shortname
+	})
+
 	return s
 }
 

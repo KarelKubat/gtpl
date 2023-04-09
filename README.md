@@ -76,7 +76,7 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/09 17:15:23 gtpl: This generates one log statement
+2023/04/09 21:48:00 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.1
 ```
 ### Example: examples/01-types.tpl
@@ -362,56 +362,41 @@ Fibonacci series
 The list can be generated using `gtpl -b`.
 
 ```
-expander (long name: .Gtpl.Expander)
-  {{ expander }} - the name of this template expander
-
-version (long name: .Gtpl.Version)
-  {{ version }} - the version of this template expander
-
-log (long name: .Gtpl.Log)
-  {{ log "some" "info" }} - sends args to the log
-
-die (long name: .Gtpl.Die)
-  {{ die "some" "info" }} - prints args, logs them if logging was used, stops
-
-assert (long name: .Gtpl.Assert)
-  asserts a condition and stops if not met: {{ assert (len $list) gt 0) "list is empty!" }}
-
-list (long name: .Gtpl.List)
-  {{ $list := list "a" "b" "c" }} - creates a list
-
-haselement (long name: .Gtpl.HasElement)
-  {{ if (haselement $list "a") }} 'a' occurs in the list {{ end }}
-
-indexof (long name: .Gtpl.IndexOf)
-  'a' occurs at index {{ indexof $list "a" }} in the list
+add (long name: .Gtpl.Add)
+  21 + 21 is {{ add (21 21) }}
 
 addelements (long name: .Gtpl.AddElements)
   {{ $newlist := (addelements $list "d" "e") }} - creates a new list with added element
 
-map (long name: .Gtpl.Map)
-  {{ $map := map "cat" "meow" "dog" "woof" }} - creates a map
+assert (long name: .Gtpl.Assert)
+  asserts a condition and stops if not met: {{ assert (len $list) gt 0) "list is empty!" }}
 
-haskey (long name: .Gtpl.HasKey)
-  {{ if haskey $map "cat" }} yes {{ else }} no {{ end }} - tests whether a key is in a map
+die (long name: .Gtpl.Die)
+  {{ die "some" "info" }} - prints args, logs them if logging was used, stops
+
+div (long name: .Gtpl.Div)
+  42 / 4 = {{ div 42 4 }}
+
+expander (long name: .Gtpl.Expander)
+  {{ expander }} - the name of this template expander
 
 getval (long name: .Gtpl.GetVal)
   a cat says {{ get $map "cat" }} - gets a value from a map, "" if absent
 
-setkeyval (long name: .Gtpl.SetKeyVal)
-  {{ set $map "frog" "ribbit" }} - adds a key/value pair to a map
+haselement (long name: .Gtpl.HasElement)
+  {{ if (haselement $list "a") }} 'a' occurs in the list {{ end }}
 
-type (long name: .Gtpl.Type)
-  expands to "int", "float", "list" or "map": {{ $t := type $map }} {{ if $t ne "map" }} something is very wrong {{ end }}
+haskey (long name: .Gtpl.HasKey)
+  {{ if haskey $map "cat" }} yes {{ else }} no {{ end }} - tests whether a key is in a map
 
-isint (long name: .Gtpl.IsInt)
-  true when its argument is an integer
+indexof (long name: .Gtpl.IndexOf)
+  'a' occurs at index {{ indexof $list "a" }} in the list
 
 isfloat (long name: .Gtpl.IsFloat)
   true when its argument is a float
 
-isnumber (long name: .Gtpl.IsNumber)
-  true when its argument is an int or a float
+isint (long name: .Gtpl.IsInt)
+  true when its argument is an integer
 
 islist (long name: .Gtpl.IsList)
   true when its argument is a list (or a slice)
@@ -419,19 +404,34 @@ islist (long name: .Gtpl.IsList)
 ismap (long name: .Gtpl.IsMap)
   true when its argument is a map
 
-add (long name: .Gtpl.Add)
-  21 + 21 is {{ add (21 21) }}
+isnumber (long name: .Gtpl.IsNumber)
+  true when its argument is an int or a float
 
-sub (long name: .Gtpl.Sub)
-  42 - 2 = {{ sub 42 2}}
+list (long name: .Gtpl.List)
+  {{ $list := list "a" "b" "c" }} - creates a list
+
+log (long name: .Gtpl.Log)
+  {{ log "some" "info" }} - sends args to the log
+
+loop (long name: .Gtpl.Loop)
+  1 up to and including 10: {{ range $i := loop 1 11 }} {{ $i }} {{ end }}
+
+map (long name: .Gtpl.Map)
+  {{ $map := map "cat" "meow" "dog" "woof" }} - creates a map
 
 mul (long name: .Gtpl.Mul)
   7 * 4 = {{ mul 7 4 }}
 
-div (long name: .Gtpl.Div)
-  42 / 4 = {{ div 42 4 }}
+setkeyval (long name: .Gtpl.SetKeyVal)
+  {{ set $map "frog" "ribbit" }} - adds a key/value pair to a map
 
-loop (long name: .Gtpl.Loop)
-  1 up to and including 10: {{ range $i := loop 1 11 }} {{ $i }} {{ end }}
+sub (long name: .Gtpl.Sub)
+  42 - 2 = {{ sub 42 2}}
+
+type (long name: .Gtpl.Type)
+  expands to "int", "float", "list" or "map": {{ $t := type $map }} {{ if $t ne "map" }} something is very wrong {{ end }}
+
+version (long name: .Gtpl.Version)
+  {{ version }} - the version of this template expander
 
 ```
