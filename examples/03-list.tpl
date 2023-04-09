@@ -18,8 +18,8 @@ The second element is {{ index $list 1}}
 Element "three" occurs at index {{ indexof $list "three" }}
 
 Let's add "four" and "five".
-{{- $list = addelements $list "four" "five" }}
-I've got {{ range $sense := $list }}{{ $sense }} {{ end }}senses working overtime.
+{{ $list = addelements $list "four" "five" }}
+I've $got {{ range $sense := $list }}{{ $sense }} {{ end }}senses working overtime.
 
 {{ if (haselement $list "five") }}
   "five" is in the list
