@@ -276,11 +276,6 @@ func (s *Syringe) List(args ...interface{}) []interface{} {
 	return args
 }
 
-// Len returns the length of a list.
-func (s *Syringe) Len(list []interface{}) int {
-	return len(list)
-}
-
 // HasElement is the builtin that checks whether a list contains an element.
 func (s *Syringe) HasElement(list []interface{}, el interface{}) bool {
 	for _, e := range list {
