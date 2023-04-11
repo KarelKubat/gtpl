@@ -40,6 +40,6 @@ gtpl FILE1 FILE2 [FILE3...]
 ```
 
 - Would you like to see all supported flags and the usage? Try `gtpl -h`.
-- Would you like to see what builtins `gtpl` offers? Try `gtlp -b`.
+- Would you like to see what builtins `gtpl` offers? Try `gtpl -b`.
 - Do you dislike the action delimiters in template files, which default to `{{` and `}}`? Try `gtpl -left` and `gtpl -right`.
 - See `gtpl -h` for a full overview.
