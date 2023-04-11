@@ -1,9 +1,9 @@
 package syringe
 
 import (
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"reflect"
 	"sort"
 	"strings"
@@ -255,23 +255,21 @@ func (s *Syringe) Log(args ...interface{}) string {
 
 // Die is the builtin that stops execution. If previous `Log` invocations occurred, then the
 // the reason for stopping is logged, else, the reason is shown on `os.Stderr`.
-func (s *Syringe) Die(args ...interface{}) string {
+func (s *Syringe) Die(args ...interface{}) (string, error) {
 	msg := fmt.Sprint(args...)
 	if s.logUsed {
 		s.Log(msg)
-	} else {
-		fmt.Fprintf(os.Stderr, "%s: %s\n", s.expander, msg)
 	}
-	os.Exit(1)
-	return ""
+	return "", errors.New(msg)
 }
 
 // Assert is the builtin that ensures a condition.
-func (s *Syringe) Assert(cond bool, args ...interface{}) string {
+func (s *Syringe) Assert(cond bool, args ...interface{}) (string, error) {
+	var err error
 	if !cond {
-		s.Die(args...)
+		err = errors.New(fmt.Sprint(args...))
 	}
-	return ""
+	return "", err
 }
 
 /* List related */
