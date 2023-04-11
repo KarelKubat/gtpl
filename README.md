@@ -76,8 +76,8 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/10 00:58:09 gtpl: This generates one log statement
-This template is processed by gtpl version 0.0.1
+2023/04/11 22:52:51 gtpl: This generates one log statement
+This template is processed by gtpl version 0.0.2
 ```
 ### Example: examples/01-types.tpl
 
@@ -360,78 +360,122 @@ Fibonacci series
 ## List of Built in Functions
 
 The list can be generated using `gtpl -b`.
+The lowercase aliases (e.g., `add` for `.Gtpl.Add`) are **not** available
+when the flag `--allow-aliases=false` is given. 
 
 ```
-add (long name: .Gtpl.Add)
+add (longname: .Gtpl.Add)
   21 + 21 is {{ add (21 21) }}
 
-addelements (long name: .Gtpl.AddElements)
+addelements (longname: .Gtpl.AddElements)
   {{ $newlist := (addelements $list "d" "e") }} - creates a new list with added element
 
-assert (long name: .Gtpl.Assert)
+assert (longname: .Gtpl.Assert)
   asserts a condition and stops if not met: {{ assert (len $list) gt 0) "list is empty!" }}
 
-die (long name: .Gtpl.Die)
+die (longname: .Gtpl.Die)
   {{ die "some" "info" }} - prints args, logs them if logging was used, stops
 
-div (long name: .Gtpl.Div)
+div (longname: .Gtpl.Div)
   42 / 4 = {{ div 42 4 }}
 
-expander (long name: .Gtpl.Expander)
+expander (longname: .Gtpl.Expander)
   {{ expander }} - the name of this template expander
 
-getval (long name: .Gtpl.GetVal)
+getval (longname: .Gtpl.GetVal)
   a cat says {{ get $map "cat" }} - gets a value from a map, "" if absent
 
-haselement (long name: .Gtpl.HasElement)
+haselement (longname: .Gtpl.HasElement)
   {{ if (haselement $list "a") }} 'a' occurs in the list {{ end }}
 
-haskey (long name: .Gtpl.HasKey)
+haskey (longname: .Gtpl.HasKey)
   {{ if haskey $map "cat" }} yes {{ else }} no {{ end }} - tests whether a key is in a map
 
-indexof (long name: .Gtpl.IndexOf)
+indexof (longname: .Gtpl.IndexOf)
   'a' occurs at index {{ indexof $list "a" }} in the list
 
-isfloat (long name: .Gtpl.IsFloat)
+isfloat (longname: .Gtpl.IsFloat)
   true when its argument is a float
 
-isint (long name: .Gtpl.IsInt)
+isint (longname: .Gtpl.IsInt)
   true when its argument is an integer
 
-islist (long name: .Gtpl.IsList)
+islist (longname: .Gtpl.IsList)
   true when its argument is a list (or a slice)
 
-ismap (long name: .Gtpl.IsMap)
+ismap (longname: .Gtpl.IsMap)
   true when its argument is a map
 
-isnumber (long name: .Gtpl.IsNumber)
+isnumber (longname: .Gtpl.IsNumber)
   true when its argument is an int or a float
 
-list (long name: .Gtpl.List)
+list (longname: .Gtpl.List)
   {{ $list := list "a" "b" "c" }} - creates a list
 
-log (long name: .Gtpl.Log)
+log (longname: .Gtpl.Log)
   {{ log "some" "info" }} - sends args to the log
 
-loop (long name: .Gtpl.Loop)
+loop (longname: .Gtpl.Loop)
   1 up to and including 10: {{ range $i := loop 1 11 }} {{ $i }} {{ end }}
 
-map (long name: .Gtpl.Map)
+map (longname: .Gtpl.Map)
   {{ $map := map "cat" "meow" "dog" "woof" }} - creates a map
 
-mul (long name: .Gtpl.Mul)
+mul (longname: .Gtpl.Mul)
   7 * 4 = {{ mul 7 4 }}
 
-setkeyval (long name: .Gtpl.SetKeyVal)
+setkeyval (longname: .Gtpl.SetKeyVal)
   {{ set $map "frog" "ribbit" }} - adds a key/value pair to a map
 
-sub (long name: .Gtpl.Sub)
+sub (longname: .Gtpl.Sub)
   42 - 2 = {{ sub 42 2}}
 
-type (long name: .Gtpl.Type)
-  expands to "int", "float", "list" or "map": {{ $t := type $map }} {{ if $t ne "map" }} something is very wrong {{ end }}
+type (longname: .Gtpl.Type)
+  expands to "int", "float", "list" or "map"
+  {{ $t := type $map }} {{ if $t ne "map" }} something is very wrong {{ end }}
 
-version (long name: .Gtpl.Version)
+version (longname: .Gtpl.Version)
   {{ version }} - the version of this template expander
 
+
 ```
+## Expanding `gtpl` or embedding it in your own Go programs
+
+### Package `processor`
+
+If you want to embed the template processor in your own Go programs, then the easiest way is to import `github.com/KarelKubat/gtpl/processor` and to use that. An example is in the top level main program `gtpl.go`.
+
+The processor is instantiated using options that define whether to remove empty lines from the output, whether to aliases (`map` as alias for `.Gtpl.Map` etc.). Then the processor can be started to expand the templates from a reader stream or from files. The output is sent to a writer stream for the caller to process. The minimal example is:
+
+```go
+// No special options:
+// - No function aliases (builtins are `.Gtpl.Map`, no alias `map` etc.
+// - Left delimiter is Go's default {{, right delimter is }}
+// - Empty lines in the output are not removed
+// - .Gtpl.Log functions invoke the standard Go logger
+p := processor.New(&processor.Opts{
+    // Nothing to see here
+})
+
+// Template(s) are expected on stdin, output goes to stdout
+err := p.ProcessStreams(os.Stdin, os.Stdout)
+```
+
+The logger that `.Gtpl.Log` invokes (the alias `log` exists when aliases are enabled) must satisfy the interface `syringe.Logger`, which means that it must have a member function `Print()`. A customized logger can be plugged in as follows:
+
+- You can pass any receiver to something that implements `Print()`
+- You can instantiate the default logger, using `log.Default()` and customize it, then pass that
+- A very simple version is in `github.com/KarelKubat/gtpl/logger`. This package uses the standard Go logger but sends output to stderr, stdout or to a file. The top-level main program `gtpl.go` uses that.
+
+### Package `syringe`
+
+A more low-level library is `github.com/KarelKubat/gtpl/syringe`. This package actually implements the functions such as `list` or `map` and injects them into the template processor. Supplying the template and expanding it (using the standard `text/template` package) is left to the caller.
+
+**Do not change the fingerprint of builtins**, that breaks backwards compatibility. If needed, implement a new functions that does what you need. Adding checks to an existing function, fixing bugs or the like is of course okay.
+
+To expand the list of builtins, please proceed as follows:
+
+- Implement the function by adding it to the right section (general, list-related etc.).
+- Expand the list of builtins which is constructed in `New()`. This list maps functions `.Gtpl.Whatever` to their short name and provides a very short description.
+- Update the version string at the top of the file.
+- Send me a pull request :)
