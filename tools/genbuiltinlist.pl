@@ -10,7 +10,9 @@ if ($top ne "") {
 
 print(
     "## List of Built in Functions\n\n",
-    "The list can be generated using `gtpl -b`.\n\n",
+    "The list can be generated using `gtpl -b`.\n",
+    "The lowercase aliases (e.g., `add` for `.Gtpl.Add`) are **not** available\n",
+    "when the flag `--allow-aliases=false` is given. \n\n",
     "```\n");
 
 open(my $if, "go run gtpl.go -b |") or die;
