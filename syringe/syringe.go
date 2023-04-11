@@ -6,228 +6,231 @@ import (
 	"log"
 	"reflect"
 	"sort"
-	"strings"
 	"text/template"
 )
 
 const (
+	// Type names
 	intString     = "int"
 	floatString   = "float"
 	numberString  = "number"
 	listString    = "list"
 	mapString     = "map"
 	unknownString = "unknown"
+
+	// Name/version of this beast
+	expanderName    = "gtpl"
+	expanderVersion = "0.0.2"
 )
+
+// Logger is an interface that Syringe uses for "log" statements.
+type Logger interface {
+	Print(v ...interface{})
+}
 
 // Syringe is the receiver of the template functions injector.
 type Syringe struct {
-	expander string
-	version  string
+	logger   Logger
 	logUsed  bool
-	builtins []builtinFunc
+	builtins []Builtin
 }
 
 // Opts are the options for New.
 type Opts struct {
-	Expander string
-	Version  string
+	Logger Logger // Used for "log" statements, defaults to https://pkg.go.dev/log
 }
 
-type builtinFunc struct {
-	function  interface{}
-	longname  string
-	shortname string
-	usage     string
+type Builtin struct {
+	function interface{}
+	Name     string
+	Alias    string
+	Usage    string
 }
 
 // New returns an initialized Syringe.
 func New(o *Opts) *Syringe {
 	s := &Syringe{
-		expander: o.Expander,
-		version:  o.Version,
+		logger: o.Logger,
 	}
-	s.builtins = []builtinFunc{
+	if s.logger == nil {
+		s.logger = log.Default()
+	}
+	s.builtins = []Builtin{
 		// General
 		{
-			function:  s.Expander,
-			longname:  ".Gtpl.Expander",
-			shortname: "expander",
-			usage:     "{{ expander }} - the name of this template expander",
+			function: s.Expander,
+			Name:     "Expander",
+			Alias:    "expander",
+			Usage:    "{{ expander }} - the name of this template expander",
 		},
 		{
-			function:  s.Version,
-			longname:  ".Gtpl.Version",
-			shortname: "version",
-			usage:     "{{ version }} - the version of this template expander",
+			function: s.Version,
+			Name:     "Version",
+			Alias:    "version",
+			Usage:    "{{ version }} - the version of this template expander",
 		},
 		{
-			function:  s.Log,
-			longname:  ".Gtpl.Log",
-			shortname: "log",
-			usage:     `{{ log "some" "info" }} - sends args to the log`,
+			function: s.Log,
+			Name:     "Log",
+			Alias:    "log",
+			Usage:    `{{ log "some" "info" }} - sends args to the log`,
 		},
 		{
-			function:  s.Die,
-			longname:  ".Gtpl.Die",
-			shortname: "die",
-			usage:     `{{ die "some" "info" }} - prints args, logs them if logging was used, stops`,
+			function: s.Die,
+			Name:     "Die",
+			Alias:    "die",
+			Usage:    `{{ die "some" "info" }} - prints args, logs them if logging was used, stops`,
 		},
 		{
-			function:  s.Assert,
-			longname:  ".Gtpl.Assert",
-			shortname: "assert",
-			usage:     `asserts a condition and stops if not met: {{ assert (len $list) gt 0) "list is empty!" }}`,
+			function: s.Assert,
+			Name:     "Assert",
+			Alias:    "assert",
+			Usage:    `asserts a condition and stops if not met: {{ assert (len $list) gt 0) "list is empty!" }}`,
 		},
 
 		// Lists
 		{
-			function:  s.List,
-			longname:  ".Gtpl.List",
-			shortname: "list",
-			usage:     `{{ $list := list "a" "b" "c" }} - creates a list`,
+			function: s.List,
+			Name:     "List",
+			Alias:    "list",
+			Usage:    `{{ $list := list "a" "b" "c" }} - creates a list`,
 		},
 		{
-			function:  s.HasElement,
-			longname:  ".Gtpl.HasElement",
-			shortname: "haselement",
-			usage:     `{{ if (haselement $list "a") }} 'a' occurs in the list {{ end }}`,
+			function: s.HasElement,
+			Name:     "HasElement",
+			Alias:    "haselement",
+			Usage:    `{{ if (haselement $list "a") }} 'a' occurs in the list {{ end }}`,
 		},
 		{
-			function:  s.IndexOf,
-			longname:  ".Gtpl.IndexOf",
-			shortname: "indexof",
-			usage:     `'a' occurs at index {{ indexof $list "a" }} in the list`,
+			function: s.IndexOf,
+			Name:     "IndexOf",
+			Alias:    "indexof",
+			Usage:    `'a' occurs at index {{ indexof $list "a" }} in the list`,
 		},
 		{
-			function:  s.AddElements,
-			longname:  ".Gtpl.AddElements",
-			shortname: "addelements",
-			usage:     `{{ $newlist := (addelements $list "d" "e") }} - creates a new list with added element`,
+			function: s.AddElements,
+			Name:     "AddElements",
+			Alias:    "addelements",
+			Usage:    `{{ $newlist := (addelements $list "d" "e") }} - creates a new list with added element`,
 		},
 
 		// Maps
 		{
-			function:  s.Map,
-			longname:  ".Gtpl.Map",
-			shortname: "map",
-			usage:     `{{ $map := map "cat" "meow" "dog" "woof" }} - creates a map`,
+			function: s.Map,
+			Name:     "Map",
+			Alias:    "map",
+			Usage:    `{{ $map := map "cat" "meow" "dog" "woof" }} - creates a map`,
 		},
 		{
-			function:  s.HasKey,
-			longname:  ".Gtpl.HasKey",
-			shortname: "haskey",
-			usage:     `{{ if haskey $map "cat" }} yes {{ else }} no {{ end }} - tests whether a key is in a map`,
+			function: s.HasKey,
+			Name:     "HasKey",
+			Alias:    "haskey",
+			Usage:    `{{ if haskey $map "cat" }} yes {{ else }} no {{ end }} - tests whether a key is in a map`,
 		},
 		{
-			function:  s.GetVal,
-			longname:  ".Gtpl.GetVal",
-			shortname: "getval",
-			usage:     `a cat says {{ get $map "cat" }} - gets a value from a map, "" if absent`,
+			function: s.GetVal,
+			Name:     "GetVal",
+			Alias:    "getval",
+			Usage:    `a cat says {{ get $map "cat" }} - gets a value from a map, "" if absent`,
 		},
 		{
-			function:  s.SetKeyVal,
-			longname:  ".Gtpl.SetKeyVal",
-			shortname: "setkeyval",
-			usage:     `{{ set $map "frog" "ribbit" }} - adds a key/value pair to a map`,
+			function: s.SetKeyVal,
+			Name:     "SetKeyVal",
+			Alias:    "setkeyval",
+			Usage:    `{{ set $map "frog" "ribbit" }} - adds a key/value pair to a map`,
 		},
 
 		// Types
 		{
-			function:  s.Type,
-			longname:  ".Gtpl.Type",
-			shortname: "type",
-			usage:     `expands to "int", "float", "list" or "map": {{ $t := type $map }} {{ if $t ne "map" }} something is very wrong {{ end }}`,
+			function: s.Type,
+			Name:     "Type",
+			Alias:    "type",
+			Usage: `expands to "int", "float", "list" or "map"` + "\n" +
+				`{{ $t := type $map }} {{ if $t ne "map" }} something is very wrong {{ end }}`,
 		},
 		{
-			function:  s.IsInt,
-			longname:  ".Gtpl.IsInt",
-			shortname: "isint",
-			usage:     `true when its argument is an integer`,
+			function: s.IsInt,
+			Name:     "IsInt",
+			Alias:    "isint",
+			Usage:    `true when its argument is an integer`,
 		},
 		{
-			function:  s.IsFloat,
-			longname:  ".Gtpl.IsFloat",
-			shortname: "isfloat",
-			usage:     `true when its argument is a float`,
+			function: s.IsFloat,
+			Name:     "IsFloat",
+			Alias:    "isfloat",
+			Usage:    `true when its argument is a float`,
 		},
 		{
-			function:  s.IsNumber,
-			longname:  ".Gtpl.IsNumber",
-			shortname: "isnumber",
-			usage:     `true when its argument is an int or a float`,
+			function: s.IsNumber,
+			Name:     "IsNumber",
+			Alias:    "isnumber",
+			Usage:    `true when its argument is an int or a float`,
 		},
 		{
-			function:  s.IsList,
-			longname:  ".Gtpl.IsList",
-			shortname: "islist",
-			usage:     `true when its argument is a list (or a slice)`,
+			function: s.IsList,
+			Name:     "IsList",
+			Alias:    "islist",
+			Usage:    `true when its argument is a list (or a slice)`,
 		},
 		{
-			function:  s.IsMap,
-			longname:  ".Gtpl.IsMap",
-			shortname: "ismap",
-			usage:     `true when its argument is a map`,
+			function: s.IsMap,
+			Name:     "IsMap",
+			Alias:    "ismap",
+			Usage:    `true when its argument is a map`,
 		},
 
 		// Arithmetic / misc
 		{
-			function:  s.Add,
-			longname:  ".Gtpl.Add",
-			shortname: "add",
-			usage:     `21 + 21 is {{ add (21 21) }}`,
+			function: s.Add,
+			Name:     "Add",
+			Alias:    "add",
+			Usage:    `21 + 21 is {{ add (21 21) }}`,
 		},
 		{
-			function:  s.Sub,
-			longname:  ".Gtpl.Sub",
-			shortname: "sub",
-			usage:     `42 - 2 = {{ sub 42 2}}`,
+			function: s.Sub,
+			Name:     "Sub",
+			Alias:    "sub",
+			Usage:    `42 - 2 = {{ sub 42 2}}`,
 		},
 		{
-			function:  s.Mul,
-			longname:  ".Gtpl.Mul",
-			shortname: "mul",
-			usage:     `7 * 4 = {{ mul 7 4 }}`,
+			function: s.Mul,
+			Name:     "Mul",
+			Alias:    "mul",
+			Usage:    `7 * 4 = {{ mul 7 4 }}`,
 		},
 		{
-			function:  s.Div,
-			longname:  ".Gtpl.Div",
-			shortname: "div",
-			usage:     `42 / 4 = {{ div 42 4 }}`,
+			function: s.Div,
+			Name:     "Div",
+			Alias:    "div",
+			Usage:    `42 / 4 = {{ div 42 4 }}`,
 		},
 		{
-			function:  s.Loop,
-			longname:  ".Gtpl.Loop",
-			shortname: "loop",
-			usage:     `1 up to and including 10: {{ range $i := loop 1 11 }} {{ $i }} {{ end }}`,
+			function: s.Loop,
+			Name:     "Loop",
+			Alias:    "loop",
+			Usage:    `1 up to and including 10: {{ range $i := loop 1 11 }} {{ $i }} {{ end }}`,
 		},
 	}
 	sort.Slice(s.builtins, func(i, j int) bool {
-		return s.builtins[i].shortname < s.builtins[j].shortname
+		return s.builtins[i].Name < s.builtins[j].Name
 	})
 
 	return s
 }
 
-// FlatNamespace returns a `template.FuncMap` that can be passed to text/template so that shorthand
+// AliasesMap returns a `template.FuncMap` that can be passed to text/template so that shorthand
 // builtins can be used.
-func (s *Syringe) FlatNamespace() template.FuncMap {
+func (s *Syringe) AliasesMap() template.FuncMap {
 	fmap := template.FuncMap{}
 	for _, b := range s.builtins {
-		fmap[b.shortname] = b.function
+		fmap[b.Alias] = b.function
 	}
 	return fmap
 }
 
-// Overview returns a short usage text of the builtins.
-func (s *Syringe) Overview() string {
-	str := []string{}
-	for _, b := range s.builtins {
-		str = append(str,
-			fmt.Sprintf("%v (long name: %v)", b.shortname, b.longname),
-			"  "+b.usage,
-			"")
-	}
-	return strings.Join(str, "\n")
+// Builtins returns the list of builtin functions.
+func (s *Syringe) Builtins() []Builtin {
+	return s.builtins
 }
 
 // Builtin functions.
@@ -237,19 +240,18 @@ func (s *Syringe) Overview() string {
 
 // Expander is the builtin returning the name of the expander program.
 func (s *Syringe) Expander() string {
-	return s.expander
+	return expanderName
 }
 
 // Version is the builtin returning the version of the expander program.
 func (s *Syringe) Version() string {
-	return s.version
+	return expanderVersion
 }
 
 // Log is the builtin that logs information using the `log.Print` function.
 func (s *Syringe) Log(args ...interface{}) string {
 	s.logUsed = true
-	msg := fmt.Sprint(args...)
-	log.Printf("%s: %s", s.expander, msg)
+	s.logger.Print(fmt.Sprintf("%s: %s", expanderName, fmt.Sprint(args...)))
 	return ""
 }
 
