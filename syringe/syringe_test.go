@@ -8,39 +8,30 @@ import (
 	"text/template"
 )
 
-const (
-	longnamePrefix = ".Gtpl."
-	expanderName   = "plugh" // You are in a maze of twisty little passages,
-	versionID      = "xyzzy" // all different.
-)
-
 func TestDocStrings(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	for _, b := range s.builtins {
-		if !strings.HasPrefix(b.longname, longnamePrefix) {
-			t.Errorf("docstrings: longname %q doesn't start with %q", b.longname, longnamePrefix)
+		if strings.ToLower(b.Alias) != b.Alias {
+			t.Errorf("docstrings: shortname %q isn't all lowercase", b.Alias)
 		}
-		if strings.ToLower(b.shortname) != b.shortname {
-			t.Errorf("docstrings: shortname %q isn't all lowercase", b.shortname)
-		}
-		if b.usage == "" {
-			t.Errorf("docstrings: function %q lacks usage", b.longname)
+		if b.Usage == "" {
+			t.Errorf("docstrings: function %q lacks usage", b.Name)
 		}
 	}
 }
 
 func TestExpanderAndVersion(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	if s.Expander() != expanderName {
 		t.Errorf("Expander() = %q, want %q", s.Expander(), expanderName)
 	}
-	if s.Version() != versionID {
-		t.Errorf("Version() = %q, want %q", s.Version(), versionID)
+	if s.Version() != expanderVersion {
+		t.Errorf("Version() = %q, want %q", s.Version(), expanderVersion)
 	}
 }
 
 func TestListIsList(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	l := s.List(0, 1, 2, 3, 4)
 	for i, e := range l {
 		if interface{}(reflect.ValueOf(e).Interface()) != i {
@@ -54,7 +45,7 @@ func TestListIsList(t *testing.T) {
 }
 
 func TestHasElement(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	l := s.List(0, 1, 2)
 	for i := 0; i <= 5; i++ {
 		want := i <= 2
@@ -66,7 +57,7 @@ func TestHasElement(t *testing.T) {
 }
 
 func TestIndexOf(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	l := s.List(0, 1, 2, 3, 4, 5)
 	for i := 0; i <= 5; i++ {
 		if got := s.IndexOf(l, interface{}(i)); got != i {
@@ -76,7 +67,7 @@ func TestIndexOf(t *testing.T) {
 }
 
 func TestAddElements(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	l0 := s.List(0, 1, 2, 3)
 	l1 := s.AddElements(l0, 4, 5)
 	if len(l1) != 6 {
@@ -90,7 +81,7 @@ func TestAddElements(t *testing.T) {
 }
 
 func TestMapIsMap(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	m := s.Map(0, "zero", 1, "one", 2, "two", 3, "three")
 	v := reflect.ValueOf(m)
 	if v.Kind() != reflect.Map {
@@ -99,7 +90,7 @@ func TestMapIsMap(t *testing.T) {
 }
 
 func TestHasKey(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	m := s.Map(0, "zero", 1, "one", 2, "two", 3, "three")
 	for _, test := range []struct {
 		key        int
@@ -121,7 +112,7 @@ func TestHasKey(t *testing.T) {
 }
 
 func TestGetAndSetVal(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	m := s.Map(0, "zero", 1, "one", 2, "two", 3, "three")
 	for _, test := range []struct {
 		key     int
@@ -157,7 +148,7 @@ func TestGetAndSetVal(t *testing.T) {
 }
 
 func TestIsKind(t *testing.T) {
-	s := New(&Opts{Expander: expanderName, Version: versionID})
+	s := New(&Opts{})
 	for _, test := range []struct {
 		v    interface{}
 		want string
@@ -185,8 +176,8 @@ func TestIsAndAssert(t *testing.T) {
 	{{ $map := map "a" 1 "b" 2 }}
 	{{ assert (ismap $map)     "$map must be a number" }}
 	`
-	s := New(&Opts{Expander: expanderName, Version: versionID})
-	tpl, err := template.New("test").Funcs(s.FlatNamespace()).Parse(str)
+	s := New(&Opts{})
+	tpl, err := template.New("test").Funcs(s.AliasesMap()).Parse(str)
 	if err != nil {
 		t.Errorf("template.Parse(%q) = _,%q, need nil error", str, err.Error())
 	}
