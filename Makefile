@@ -1,5 +1,6 @@
 .phony: all
 all:
+	tools/checks/gotests
 	make README
 	make install
 
@@ -11,6 +12,9 @@ install:
 # Just for the generation of up-to-date docs.
 .phony: README
 README:
-	cat fragments/README.md > README.md
-	tools/genexampledocs.pl >> README.md
-	tools/genbuiltinlist.pl >> README.md
+	cat fragments/README.md    >  /tmp/gtpl.README.md
+	tools/genexampledocs.pl    >> /tmp/gtpl.README.md
+	tools/genbuiltinlist.pl    >> /tmp/gtpl.README.md
+	cat fragments/embedding.md >> /tmp/gtpl.README.md
+	cp /tmp/gtpl.README.md README.md
+	rm /tmp/gtpl.README.md
