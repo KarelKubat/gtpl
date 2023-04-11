@@ -1,9 +1,11 @@
 package syringe
 
 import (
+	"log"
 	"reflect"
 	"strings"
 	"testing"
+	"text/template"
 )
 
 const (
@@ -170,5 +172,25 @@ func TestIsKind(t *testing.T) {
 			t.Errorf("Type(%v) = %q, want %q", test.v, got, test.want)
 		}
 	}
+}
 
+func TestIsAndAssert(t *testing.T) {
+	str := `
+	{{ assert (isint   12)     "12 must be an int" }}
+	{{ assert (isfloat 2.71)   "2.71 must be a float" }}
+	{{ assert (isnumber 12)    "12 must be a number" }}
+	{{ assert (isnumber 2.71)  "2.71 must be a number" }}
+	{{ $list := list 1 2 3 }}
+	{{ assert (islist $list)   "$list must be a number" }}
+	{{ $map := map "a" 1 "b" 2 }}
+	{{ assert (ismap $map)     "$map must be a number" }}
+	`
+	s := New(&Opts{Expander: expanderName, Version: versionID})
+	tpl, err := template.New("test").Funcs(s.FlatNamespace()).Parse(str)
+	if err != nil {
+		t.Errorf("template.Parse(%q) = _,%q, need nil error", str, err.Error())
+	}
+	if err := tpl.Execute(log.Writer(), s); err != nil {
+		t.Errorf("template.Execute(...) = %q, want nil error", err.Error())
+	}
 }
