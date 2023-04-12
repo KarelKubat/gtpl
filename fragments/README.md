@@ -1,5 +1,8 @@
 # gtpl: Generic (Golang) Template Expander
 
+<!-- toc -->
+<!-- /toc -->
+
 `gtpl` is a generic (Go-style) template parser that allows one to expand templates. `gtpl` prepares a number of handy functions that can be used in your templates, such as: maps management, lists, types.
 
 I wrote `gtpl` because in some situations I have configuration files with a lot of boilerplate and just small variants for different cases. Typing out such configuration files is:

@@ -18,3 +18,4 @@ README:
 	cat fragments/embedding.md >> /tmp/gtpl.README.md
 	cp /tmp/gtpl.README.md README.md
 	rm /tmp/gtpl.README.md
+	-mdtoc --inplace README.md

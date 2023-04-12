@@ -1,5 +1,21 @@
 # gtpl: Generic (Golang) Template Expander
 
+<!-- toc -->
+- [Usage](#usage)
+- [Examples](#examples)
+  - [Example: examples/00-general.tpl](#example-examples00-generaltpl)
+  - [Example: examples/01-types.tpl](#example-examples01-typestpl)
+  - [Example: examples/02-arith.tpl](#example-examples02-arithtpl)
+  - [Example: examples/03-list.tpl](#example-examples03-listtpl)
+  - [Example: examples/04-mambo.tpl](#example-examples04-mambotpl)
+  - [Example: examples/05-maps.tpl](#example-examples05-mapstpl)
+  - [Example: examples/06-fibo.tpl](#example-examples06-fibotpl)
+- [List of Built in Functions](#list-of-built-in-functions)
+- [Expanding <code>gtpl</code> or embedding it in your own Go programs](#expanding-gtpl-or-embedding-it-in-your-own-go-programs)
+  - [Package <code>processor</code>](#package-processor)
+  - [Package <code>syringe</code>](#package-syringe)
+<!-- /toc -->
+
 `gtpl` is a generic (Go-style) template parser that allows one to expand templates. `gtpl` prepares a number of handy functions that can be used in your templates, such as: maps management, lists, types.
 
 I wrote `gtpl` because in some situations I have configuration files with a lot of boilerplate and just small variants for different cases. Typing out such configuration files is:
@@ -76,7 +92,7 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/12 14:21:02 gtpl: This generates one log statement
+2023/04/12 15:39:58 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.2
 ```
 ### Example: examples/01-types.tpl
