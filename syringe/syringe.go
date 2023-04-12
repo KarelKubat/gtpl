@@ -267,11 +267,10 @@ func (s *Syringe) Die(args ...interface{}) (string, error) {
 
 // Assert is the builtin that ensures a condition.
 func (s *Syringe) Assert(cond bool, args ...interface{}) (string, error) {
-	var err error
 	if !cond {
-		err = errors.New(fmt.Sprint(args...))
+		return "", fmt.Errorf("assert: %v", fmt.Sprint(args...))
 	}
-	return "", err
+	return "", nil
 }
 
 /* List related */
@@ -342,30 +341,32 @@ func (s *Syringe) SetKeyVal(m map[interface{}]interface{}, key, val interface{})
 /* Type related */
 
 // Type is the builtin to return the type of something as "int", "float", etc.
-func (s *Syringe) Type(i interface{}) string {
+func (s *Syringe) Type(i interface{}) (string, error) {
 	v := reflect.ValueOf(i)
 	switch v.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint32, reflect.Uint64:
-		return intString
+		return intString, nil
 	case reflect.Float32, reflect.Float64:
-		return floatString
+		return floatString, nil
 	case reflect.Slice, reflect.Array:
-		return listString
+		return listString, nil
 	case reflect.Map:
-		return mapString
+		return mapString, nil
 	default:
-		return unknownString
+		return unknownString, errors.New("type: none of int, float, slice, array, map")
 	}
 }
 
 // IsInt is the builtin that evaluates to `true` when its argument is an integer.
 func (s *Syringe) IsInt(i interface{}) bool {
-	return s.Type(i) == intString
+	t, _ := s.Type(i)
+	return t == intString
 }
 
 // IsFloat is the builtin that evaluates to `true` when its argument is a floating point number.
 func (s *Syringe) IsFloat(i interface{}) bool {
-	return s.Type(i) == floatString
+	t, _ := s.Type(i)
+	return t == floatString
 }
 
 // IsNumber is the builtin that evaluates to `true` when its argument is a number (int or float).
@@ -375,12 +376,14 @@ func (s *Syringe) IsNumber(i interface{}) bool {
 
 // IsList is the builtin that evaluates to `true` when its argument is a list.
 func (s *Syringe) IsList(i interface{}) bool {
-	return s.Type(i) == listString
+	t, _ := s.Type(i)
+	return t == listString
 }
 
 // IsMap is the builtin that evaluates to `true` when its argument is a map.
 func (s *Syringe) IsMap(i interface{}) bool {
-	return s.Type(i) == mapString
+	t, _ := s.Type(i)
+	return t == mapString
 }
 
 // Arithmetic.

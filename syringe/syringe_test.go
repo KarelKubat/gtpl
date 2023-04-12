@@ -159,7 +159,11 @@ func TestIsKind(t *testing.T) {
 		{[]int{1, 2, 3}, listString},
 		{map[string]string{"a": "b"}, mapString},
 	} {
-		if got := s.Type(test.v); got != test.want {
+		got, err := s.Type(test.v)
+		if err != nil {
+			t.Fatalf("Type(%v) = _%q, need nil error", test.v, err)
+		}
+		if got != test.want {
 			t.Errorf("Type(%v) = %q, want %q", test.v, got, test.want)
 		}
 	}
