@@ -92,7 +92,7 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/12 15:39:58 gtpl: This generates one log statement
+2023/04/12 15:44:59 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.2
 ```
 ### Example: examples/01-types.tpl
@@ -489,9 +489,9 @@ A more low-level library is `github.com/KarelKubat/gtpl/syringe`. This package a
 
 **Do not change the fingerprint of builtins**, that breaks backwards compatibility. If needed, implement a new functions that does what you need. Adding checks to an existing function, fixing bugs or the like is of course okay.
 
-To expand the list of builtins, please proceed as follows:
+To expand the list of builtins or to fix a bug, please proceed as follows:
 
-- Implement the function by adding it to the right section (general, list-related etc.).
-- Expand the list of builtins which is constructed in `New()`. This list maps functions `.Gtpl.Whatever` to their short names and provides very short descriptions.
+- Implement new functions by adding them to the correct section (general, list-related etc.).
+- If you add a function, then also state it in the list of builtins which is constructed in `New()`. This list maps functions `.Gtpl.Whatever` to their short names and provides very short descriptions.
 - Update the version string at the top of the file.
 - Send me a pull request :)
