@@ -9,10 +9,11 @@ use File::Spec;
 my (%test_in_dir, $test_found);
 
 sub wanted {
-    my $f = $File::Find::name;
-    $f =~ s{^./}{};
-    my $path = $f;
-    $path =~ s{/[^/]*$}{};
+    my $full = $File::Find::name;
+    my $f = basename($full);
+    my $path = dirname($full);
+
+    # printf("full:$full, path:$path, file:$f\n");
 
     if ($f =~ m{_test.go$}) {
         $test_in_dir{$path} = 1;
