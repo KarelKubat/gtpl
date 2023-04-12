@@ -46,3 +46,17 @@ gtpl FILE1 FILE2 [FILE3...]
 - Would you like to see what builtins `gtpl` offers? Try `gtpl -b`.
 - Do you dislike the action delimiters in template files, which default to `{{` and `}}`? Try `gtpl -left` and `gtpl -right`.
 - See `gtpl -h` for a full overview.
+
+`gtpl` also supports the filename `-` to indicate stdin; but to use it, you'll need the end-of-flags indicator `--`. Example:
+
+```shell
+gtpl -re -- file1 file2 - file3
+```
+
+This will:
+- Suppress empty lines in the output (`-re` is a shorthand for `-remove-empty-lines`; the even shorter version `-r` can't be used as it is not distinguishable from `-right-delimiter`)
+- Read `file1`
+- Read `file2`
+- Read whatever arrives on stdin
+- Read `file3`
+- Interpret everything that's read as a template.
