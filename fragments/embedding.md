@@ -35,6 +35,6 @@ A more low-level library is `github.com/KarelKubat/gtpl/syringe`. This package a
 To expand the list of builtins or to fix a bug, please proceed as follows:
 
 - Implement new functions by adding them to the correct section (general, list-related etc.).
-- If you add a function, then also state it in the list of builtins which is constructed in `New()`. This list maps functions `.Gtpl.Whatever` to their short names and provides very short descriptions.
+- If you add a function, then also state it in the list of builtins which is constructed in `New()`. This list maps function names such as `SomeLongName` to their aliases and provides very short descriptions.
 - Update the version string at the top of the file.
 - Send me a pull request :)
