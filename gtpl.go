@@ -15,7 +15,10 @@ const (
 Welcome to gtpl, the Generic (Go-style) Template Expander.
 Usage: gtpl [FLAGS] FILE [FILE...]
 
-All files are scanned and executed as one template. The below flags can be abbreviated
+All files are scanned and executed as one template. File - (one hyphen) makes
+gtpl read from stdin (you'll need a -- as flag terminator).
+
+The below flags can be abbreviated
 to a unique selector (-l can mean two things, -le is unique, -b is fine too).
 
 `
