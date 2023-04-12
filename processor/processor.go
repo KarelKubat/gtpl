@@ -116,9 +116,20 @@ func (p *Processor) Overview() string {
 func (p *Processor) ProcessFiles(files []string, w io.Writer) error {
 	var total bytes.Buffer
 	for _, f := range files {
-		b, err := os.ReadFile(f)
-		if err != nil {
-			return err
+		var b []byte
+		var err error
+		if f == "-" {
+			var stdin bytes.Buffer
+			_, err = stdin.ReadFrom(os.Stdin)
+			if err != nil {
+				return err
+			}
+			b = stdin.Bytes()
+		} else {
+			b, err = os.ReadFile(f)
+			if err != nil {
+				return err
+			}
 		}
 		_, err = total.Write(b)
 		if err != nil {
