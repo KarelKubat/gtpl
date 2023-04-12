@@ -59,6 +59,20 @@ gtpl FILE1 FILE2 [FILE3...]
 - Would you like to see what builtins `gtpl` offers? Try `gtpl -b`.
 - Do you dislike the action delimiters in template files, which default to `{{` and `}}`? Try `gtpl -left` and `gtpl -right`.
 - See `gtpl -h` for a full overview.
+
+`gtpl` also supports the filename `-` to indicate stdin; but to use it, you'll need the end-of-flags indicator `--`. Example:
+
+```shell
+gtpl -re -- file1 file2 - file3
+```
+
+This will:
+- Suppress empty lines in the output (`-re` is a shorthand for `-remove-empty-lines`; the even shorter version `-r` can't be used as it is not distinguishable from `-right-delimiter`)
+- Read `file1`
+- Read `file2`
+- Read whatever arrives on stdin
+- Read `file3`
+- Interpret everything that's read as a template.
 ## Examples
 
 See also `examples/*tpl`.
@@ -92,7 +106,7 @@ This template is processed by {{ expander }} version {{ version }}
 **Output** (empty lines removed):
 
 ```
-2023/04/12 15:47:01 gtpl: This generates one log statement
+2023/04/12 23:28:37 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.2
 ```
 ### Example: examples/01-types.tpl
@@ -348,8 +362,9 @@ Fibonacci series
 {{ $a := 1 }}
 {{ $b := 2 }}
 
-{{/* `loop 1 11` is a shorthand for `list 1 2 3 4 5 6 7 8 9 10` */}}
-{{/* That means "up to 11", not "and including". */}}
+{{/* `loop 0 10` is a shorthand for `list 0 1 2 3 4 5 6 7 8 9` */}}
+{{/* That means "up to 10", not "and including". */}}
+{{/* Or: `loop 0 100` means: 100 times. */}} 
 {{ range $i := loop 1 11 }}
   Number {{ $i }}: {{ $a }}
   {{ $tmp := $a }}
@@ -373,6 +388,7 @@ Fibonacci series
   Number 9: 55
   Number 10: 89
 ```
+
 ## List of Built in Functions
 
 The list can be generated using `gtpl -b`.
@@ -455,6 +471,7 @@ version (longname: .Gtpl.Version)
 
 
 ```
+
 ## Expanding `gtpl` or embedding it in your own Go programs
 
 ### Package `processor`
@@ -495,3 +512,4 @@ To expand the list of builtins or to fix a bug, please proceed as follows:
 - If you add a function, then also state it in the list of builtins which is constructed in `New()`. This list maps function names such as `SomeLongName` to their aliases and provides very short descriptions.
 - Update the version string at the top of the file.
 - Send me a pull request :)
+
