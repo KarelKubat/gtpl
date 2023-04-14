@@ -22,6 +22,7 @@ type Opts struct {
 	LeftDelimiter    string         // When "", defaults to "{{"
 	RightDelimter    string         // When "", defaults to "}}"
 	RemoveEmptyLines bool           // When true, remove empty lines from the output
+	ListTemplate     bool           // When true, list template with line numbers before processing
 	Logger           syringe.Logger // When nil, defaults to https://pkg.go.dev/log
 }
 
@@ -65,8 +66,17 @@ func (p *Processor) ProcessStreams(r io.Reader, w io.Writer) error {
 		return err
 	}
 
+	str := buf.String()
+
+	// If requested, show the collected template on stdout.
+	if p.o.ListTemplate {
+		for nr, line := range strings.Split(str, "\n") {
+			fmt.Printf("%3d %v\n", nr+1, line)
+		}
+	}
+
 	// Run the template.
-	tpl, err := template.New("gtpl").Funcs(p.fmap).Delims(p.leftDelim, p.rightDelim).Parse(buf.String())
+	tpl, err := template.New("gtpl").Funcs(p.fmap).Delims(p.leftDelim, p.rightDelim).Parse(str)
 	if err != nil {
 		return err
 	}

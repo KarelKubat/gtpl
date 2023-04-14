@@ -31,6 +31,7 @@ var (
 	rightDelimiter   = flag.String("right-delimiter", "", "closing delimiter in templates, }} when unset")
 	builtinsFlag     = flag.Bool("builtins", false, "when true, list built in functions and stop")
 	removeEmptyLines = flag.Bool("remove-empty-lines", false, "when true, remove empty lines from the output")
+	listTemplate     = flag.Bool("list-template", false, "list template with line numbers on stdout before processing")
 )
 
 func main() {
@@ -55,6 +56,7 @@ func main() {
 		LeftDelimiter:    *leftDelimiter,
 		RightDelimter:    *rightDelimiter,
 		RemoveEmptyLines: *removeEmptyLines,
+		ListTemplate:     *listTemplate,
 		Logger:           l,
 	})
 

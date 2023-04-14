@@ -60,3 +60,11 @@ This will:
 - Read whatever arrives on stdin
 - Read `file3`
 - Interpret everything that's read as a template.
+
+In the case that template expansion fails, the error message will not clearly lead to the file and line number where the error occurs. In the above example the reported line number will point to somewhere in the total information of `file1`, `file2`, whatever was sent to `stdin`, and `file3`. To help with finding the offending error, you can run:
+
+```shell
+# --list-template, or abbreviated -li, will list the template with
+# line numbers before processing.
+gtpl -re -li -- file1 file2 - file3
+```
