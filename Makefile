@@ -18,10 +18,14 @@ install:
 	go install gtpl.go
 
 # Just for the generation of up-to-date docs.
+# fragments/hosts.md how has copy/pasted sources from examples/hosts/* and the output of the
+# corresponding `gtpl` commands. I might change that into generated info.
 README:
 	cat fragments/README.md    >  /tmp/gtpl.README.md
 	echo                       >> /tmp/gtpl.README.md
 	tools/genexampledocs.pl    >> /tmp/gtpl.README.md
+	echo                       >> /tmp/gtpl.README.md
+	cat fragments/hosts.md     >> /tmp/gtpl.README.md
 	echo                       >> /tmp/gtpl.README.md
 	tools/genbuiltinlist.pl    >> /tmp/gtpl.README.md
 	echo                       >> /tmp/gtpl.README.md

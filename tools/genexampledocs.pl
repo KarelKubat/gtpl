@@ -9,7 +9,7 @@ if ($top ne "") {
 }
 
 print(
-    "## Examples\n\n",
+    "## Short Examples\n\n",
     "See also `examples/*tpl`.\n\n");
 
 my @tpls = sort(glob("examples/*tpl"));
