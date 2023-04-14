@@ -1,16 +1,23 @@
-.phony: all
+what:
+	@echo
+	@echo "Make what?"
+	@echo "  make install   to install it (or just run `go install gtpl.go`)"
+	@echo "  make README    to refresh docs (for maintainers)"
+	@echo "  make newmod    to refresh go.mod and go.sum (for maintainers)"
+	@echo "  make all       for all of the above"
+	@exit 1
+
 all:
+	make newmod
 	tools/checks/gotests
 	make README
 	make install
 
 # Run `make install` to install it.
-.phony: install
 install:
 	go install gtpl.go
 
 # Just for the generation of up-to-date docs.
-.phony: README
 README:
 	cat fragments/README.md    >  /tmp/gtpl.README.md
 	echo                       >> /tmp/gtpl.README.md
@@ -23,3 +30,8 @@ README:
 	cp /tmp/gtpl.README.md README.md
 	rm /tmp/gtpl.README.md
 	-mdtoc --inplace README.md
+
+newmod:
+	rm -f go.mod go.sum
+	go mod init
+	go mod tidy
