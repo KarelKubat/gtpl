@@ -13,11 +13,12 @@ my $expanded_content = do { local $/; <$gtplf> };
 close($gtplf) or die ("$cmd failed: $expanded_content");
 
 print(
+    "\n",
     "### Example: $ARGV[0]\n\n",
-    "```\n",
+    "```C\n",
     $file_content,
     "```\n\n",
     "**Output** (empty lines removed):\n\n",
-    "```\n",
+    "```plain\n",
     $expanded_content,
     "```\n");

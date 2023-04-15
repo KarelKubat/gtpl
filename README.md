@@ -29,6 +29,7 @@ I wrote `gtpl` because in some situations I have configuration files with a lot 
 - Hard to maintain, what if a sub-block suddenly needs another field. You need to go back and add that field to a hundred already existing sub-blocks.
 
 Sounds familiar? `gtpl` to the rescue.
+
 - It lets you define a template with a things to do, such as settings expressed in lists (arrrays), or maps (dicts).
 - It expands such templates into a target configuration file.
 - You can collect some "global" settings and apply them to different cases. `gtpl` will happily run:
@@ -71,6 +72,7 @@ gtpl -re -- file1 file2 - file3
 ```
 
 This will:
+
 - Suppress empty lines in the output (`-re` is a shorthand for `-remove-empty-lines`; the even shorter version `-r` can't be used as it is not distinguishable from `-right-delimiter`)
 - Read `file1`
 - Read `file2`
@@ -90,9 +92,10 @@ gtpl -re -li -- file1 file2 - file3
 
 See also `examples/*tpl`.
 
+
 ### Example: examples/00-general.tpl
 
-```
+```C
 {{/*
   Demo of:
     expander - the name of the expander program
@@ -121,14 +124,15 @@ My homedir is {{ env "HOME" }}
 
 **Output** (empty lines removed):
 
-```
-2023/04/15 12:47:42 gtpl: This generates one log statement
+```plain
+2023/04/15 15:13:22 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.3
 My homedir is /Users/karelk
 ```
+
 ### Example: examples/01-types.tpl
 
-```
+```C
 {{/*
     Demo of:
         list, map - constructions, see next sections
@@ -170,7 +174,7 @@ My homedir is /Users/karelk
 
 **Output** (empty lines removed):
 
-```
+```plain
   42 is a(n) int 
   3.14 is a(n) float 
   [a b c] is a(n) list 
@@ -181,9 +185,10 @@ My homedir is /Users/karelk
 42 is  not  a list
 42 is  not  a map
 ```
+
 ### Example: examples/02-arith.tpl
 
-```
+```C
 {{/*
   Demo of:
     add - adds two numbers
@@ -200,15 +205,16 @@ My homedir is /Users/karelk
 
 **Output** (empty lines removed):
 
-```
+```plain
 12 + 3 = 15
 12 - 3 = 9
 12 * 3 = 36
 12 / 3 = 4
 ```
+
 ### Example: examples/03-list.tpl
 
-```
+```C
 {{/*
     Demo of:
       list        - creates a list
@@ -241,7 +247,7 @@ I've $got {{ range $sense := $list }}{{ $sense }} {{ end }}senses working overti
 
 **Output** (empty lines removed):
 
-```
+```plain
 The list so far: [one two three]
 It has 3 elements.
 The first two elements are: [one two]
@@ -251,9 +257,10 @@ Let's add "four" and "five".
 I've $got one two three four five senses working overtime.
   "five" is in the list
 ```
+
 ### Example: examples/04-mambo.tpl
 
-```
+```C
 {{/*
     Demo of:
         map   - creates a map
@@ -277,7 +284,7 @@ A little bit of {{ $name }} {{ $what }}
 
 **Output** (empty lines removed):
 
-```
+```plain
 A little bit of Erica by my side
 A little bit of Jessica here I am
 A little bit of Mary all night long
@@ -287,9 +294,10 @@ A little bit of Sandra in the sun
 A little bit of Tina is what I see
 A little bit of you makes me your man
 ```
+
 ### Example: examples/05-maps.tpl
 
-```
+```C
 
 {{/*
     Demo of:
@@ -347,7 +355,7 @@ Name: Eve
 
 **Output** (empty lines removed):
 
-```
+```plain
 Name: Alice
   Role: sender
   Attacker: false
@@ -363,9 +371,10 @@ Name: Eve
   Role: another attacker
   Attacker: true
 ```
+
 ### Example: examples/06-fibo.tpl
 
-```
+```C
 {{/*
   Demo of:
     loop - shorthand for a list of consecutive ints
@@ -392,7 +401,7 @@ Fibonacci series
 
 **Output** (empty lines removed):
 
-```
+```plain
 Fibonacci series
   Number 1: 1
   Number 2: 2

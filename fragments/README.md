@@ -12,6 +12,7 @@ I wrote `gtpl` because in some situations I have configuration files with a lot 
 - Hard to maintain, what if a sub-block suddenly needs another field. You need to go back and add that field to a hundred already existing sub-blocks.
 
 Sounds familiar? `gtpl` to the rescue.
+
 - It lets you define a template with a things to do, such as settings expressed in lists (arrrays), or maps (dicts).
 - It expands such templates into a target configuration file.
 - You can collect some "global" settings and apply them to different cases. `gtpl` will happily run:
@@ -54,6 +55,7 @@ gtpl -re -- file1 file2 - file3
 ```
 
 This will:
+
 - Suppress empty lines in the output (`-re` is a shorthand for `-remove-empty-lines`; the even shorter version `-r` can't be used as it is not distinguishable from `-right-delimiter`)
 - Read `file1`
 - Read `file2`
