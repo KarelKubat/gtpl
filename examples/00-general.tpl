@@ -5,6 +5,7 @@
     log      - logging information
     assert   - ensuring that a condition is met
     die      - how to abort a run
+    env      - returns environment setting
   Also:
     comments - you can't have spaces between the template and comment delimiters
 */}}
@@ -19,3 +20,5 @@ This template is processed by {{ expander }} version {{ version }}
 {{/* Uncomment to cause an error.
   {{ die "stop execution with an error" }}
 */}}
+
+My homedir is {{ env "HOME" }}

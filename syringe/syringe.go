@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"reflect"
 	"sort"
 	"text/template"
@@ -20,7 +21,7 @@ const (
 
 	// Name/version of this beast
 	expanderName    = "gtpl"
-	expanderVersion = "0.0.2"
+	expanderVersion = "0.0.3"
 )
 
 // Logger is an interface that Syringe uses for "log" statements.
@@ -80,6 +81,12 @@ func New(o *Opts) *Syringe {
 			Name:     "Die",
 			Alias:    "die",
 			Usage:    `{{ die "some" "info" }} - prints args, logs them if logging was used, stops`,
+		},
+		{
+			function: s.Env,
+			Name:     "Env",
+			Alias:    "env",
+			Usage:    `my homedir is {{ env "HOME" }} - returns environment setting`,
 		},
 		{
 			function: s.Assert,
@@ -263,6 +270,11 @@ func (s *Syringe) Die(args ...interface{}) (string, error) {
 		s.Log(msg)
 	}
 	return "", errors.New(msg)
+}
+
+// Env is the builtin that fetches the value of an environment variable.
+func (s *Syringe) Env(str string) string {
+	return os.Getenv(str)
 }
 
 // Assert is the builtin that ensures a condition.

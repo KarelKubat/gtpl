@@ -100,6 +100,7 @@ See also `examples/*tpl`.
     log      - logging information
     assert   - ensuring that a condition is met
     die      - how to abort a run
+    env      - returns environment setting
   Also:
     comments - you can't have spaces between the template and comment delimiters
 */}}
@@ -114,13 +115,16 @@ This template is processed by {{ expander }} version {{ version }}
 {{/* Uncomment to cause an error.
   {{ die "stop execution with an error" }}
 */}}
+
+My homedir is {{ env "HOME" }}
 ```
 
 **Output** (empty lines removed):
 
 ```
-2023/04/14 18:42:32 gtpl: This generates one log statement
-This template is processed by gtpl version 0.0.2
+2023/04/15 12:47:42 gtpl: This generates one log statement
+This template is processed by gtpl version 0.0.3
+My homedir is /Users/karelk
 ```
 ### Example: examples/01-types.tpl
 
@@ -593,6 +597,9 @@ die (longname: .Gtpl.Die)
 
 div (longname: .Gtpl.Div)
   42 / 4 = {{ div 42 4 }}
+
+env (longname: .Gtpl.Env)
+  my homedir is {{ env "HOME" }} - returns environment setting
 
 expander (longname: .Gtpl.Expander)
   {{ expander }} - the name of this template expander
