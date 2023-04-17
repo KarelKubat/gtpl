@@ -8,6 +8,8 @@ import (
 	"reflect"
 	"sort"
 	"text/template"
+
+	"github.com/KarelKubat/gtpl/gittag"
 )
 
 const (
@@ -20,8 +22,7 @@ const (
 	unknownString = "unknown"
 
 	// Name/version of this beast
-	expanderName    = "gtpl"
-	expanderVersion = "0.0.3"
+	expanderName = "gtpl"
 )
 
 // Logger is an interface that Syringe uses for "log" statements.
@@ -252,7 +253,7 @@ func (s *Syringe) Expander() string {
 
 // Version is the builtin returning the version of the expander program.
 func (s *Syringe) Version() string {
-	return expanderVersion
+	return gittag.Version
 }
 
 // Log is the builtin that logs information using the `log.Print` function.

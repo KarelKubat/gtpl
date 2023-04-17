@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 	"text/template"
+
+	"github.com/KarelKubat/gtpl/gittag"
 )
 
 func TestDocStrings(t *testing.T) {
@@ -25,8 +27,8 @@ func TestExpanderAndVersion(t *testing.T) {
 	if s.Expander() != expanderName {
 		t.Errorf("Expander() = %q, want %q", s.Expander(), expanderName)
 	}
-	if s.Version() != expanderVersion {
-		t.Errorf("Version() = %q, want %q", s.Version(), expanderVersion)
+	if s.Version() != gittag.Version {
+		t.Errorf("Version() = %q, want %q", s.Version(), gittag.Version)
 	}
 }
 

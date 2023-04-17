@@ -126,8 +126,8 @@ My homedir is {{ env "HOME" }}
 **Output** (empty lines removed):
 
 ```plain
-2023/04/17 10:32:44 gtpl: This generates one log statement
-This template is processed by gtpl version 0.0.3
+2023/04/17 12:07:44 gtpl: This generates one log statement
+This template is processed by gtpl version v1.0.1
 My homedir is /Users/karelk
 ```
 
