@@ -10,7 +10,7 @@
     comments - you can't have spaces between the template and comment delimiters
 */}}
 
-{{ log "This generates " "one" " log statement" }}
+{{ log "This generates" "one" "log statement" }}
 This template is processed by {{ expander }} version {{ version }}
 
 {{ $answer := 42 }}

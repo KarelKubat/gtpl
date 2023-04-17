@@ -7,6 +7,7 @@ import (
 	"os"
 	"reflect"
 	"sort"
+	"strings"
 	"text/template"
 
 	"github.com/KarelKubat/gtpl/gittag"
@@ -259,7 +260,11 @@ func (s *Syringe) Version() string {
 // Log is the builtin that logs information using the `log.Print` function.
 func (s *Syringe) Log(args ...interface{}) string {
 	s.logUsed = true
-	s.logger.Print(fmt.Sprintf("%s: %s", expanderName, fmt.Sprint(args...)))
+	parts := make([]string, len(args))
+	for i, a := range args {
+		parts[i] = fmt.Sprintf("%v", a)
+	}
+	s.logger.Print(fmt.Sprintf("%s: %s", expanderName, strings.Join(parts, " ")))
 	return ""
 }
 

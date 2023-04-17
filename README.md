@@ -109,7 +109,7 @@ See also `examples/*tpl`.
     comments - you can't have spaces between the template and comment delimiters
 */}}
 
-{{ log "This generates " "one" " log statement" }}
+{{ log "This generates" "one" "log statement" }}
 This template is processed by {{ expander }} version {{ version }}
 
 {{ $answer := 42 }}
@@ -126,8 +126,8 @@ My homedir is {{ env "HOME" }}
 **Output** (empty lines removed):
 
 ```plain
-2023/04/17 12:07:44 gtpl: This generates one log statement
-This template is processed by gtpl version v1.0.1
+2023/04/17 12:59:57 gtpl: This generates one log statement
+This template is processed by gtpl version v1.0.2
 My homedir is /Users/karelk
 ```
 
