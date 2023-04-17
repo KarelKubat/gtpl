@@ -29,9 +29,14 @@ if ($codetag !~ m{v[0-9]+\.[0-9]+\.[0-9]+}) {
     die("gittag: $codetag must follow the format v.NR.NR\n");
 }
 
+my $gittag;
 open(my $if, "git tag |") or die("gittag: cannot start git tag: $!\n");
-my $gittag = <$if>;
-chomp($gittag);
+while (my $line = <$if>) {
+    chomp($line);
+    if ($line ne "") {
+        $gittag = $line;
+    }
+}
 
 if ($gittag eq '') {
     die("gittag: no git tag is set yet, do so using:\n",
