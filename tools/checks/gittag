@@ -52,4 +52,4 @@ if ($gittag ne $codetag) {
 
 print("gittag: codetag and repository tag agree, don't forget to:\n",
       "        git push origin\n",
-      "        git push origion $codetag\n");
+      "        git push origin $codetag\n");
