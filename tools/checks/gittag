@@ -50,5 +50,6 @@ if ($gittag ne $codetag) {
         "        git tag -a $codetag -m 'tagged as $codetag'\n");
 }
 
-print("gittag: codetag and repository tag agree,\n",
-      "        don't forget to `git push origin $codetag\n");
+print("gittag: codetag and repository tag agree, don't forget to:\n",
+      "        git push origin\n",
+      "        git push origion $codetag\n");
