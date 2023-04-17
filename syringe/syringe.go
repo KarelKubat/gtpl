@@ -97,6 +97,14 @@ func New(o *Opts) *Syringe {
 			Usage:    `asserts a condition and stops if not met: {{ assert (len $list) gt 0) "list is empty!" }}`,
 		},
 
+		// Strings
+		{
+			function: s.Strcat,
+			Name:     "Strcat",
+			Alias:    "strcat",
+			Usage:    `{{ $all := strcat 12 " plus " 13 " is " 25 }}`,
+		},
+
 		// Lists
 		{
 			function: s.List,
@@ -289,6 +297,17 @@ func (s *Syringe) Assert(cond bool, args ...interface{}) (string, error) {
 		return "", fmt.Errorf("assert: %v", fmt.Sprint(args...))
 	}
 	return "", nil
+}
+
+/* String related */
+
+// Strcat returns a string where all arguments are concatenated.
+func (s *Syringe) Strcat(args ...interface{}) string {
+	out := ""
+	for _, a := range args {
+		out += fmt.Sprintf("%v", a)
+	}
+	return out
 }
 
 /* List related */

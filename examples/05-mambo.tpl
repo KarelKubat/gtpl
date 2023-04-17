@@ -1,25 +1,22 @@
 {{/*
     Demo of:
-        list  - creates an array 
         map   - creates a map
     Also standard built ins:
-        range - ranging a list, or key,value pairs over a map
+        range - ranging key,value pairs over a map
 
-In this example verses (which are maps) are contained in a list
-so that in-order traversal is guaranteed.
+Note that ranging over maps has an undefined order, which may be
+alphabetical by key, but that is not guaranteed.
 */}}
 
-{{ $lyrics := list
-          (map "Monica"    "in my life")
-          (map "Erica"     "by my side")
-          (map "Rita"      "is all I need")
-          (map "Tina"      "is what I see")
-          (map "Sandra"    "in the sun")
-          (map "Mary"      "all night long")
-          (map "Jessica"   "here I am")
-          (map "you"       "makes me your man") }}
-{{ range $verse := $lyrics }}
-  {{ range $name, $what := $verse }}
-    A little bit of {{ $name }} {{ $what }}
-  {{ end }}
+{{ $lyrics := map
+          "Monica"    "in my life"
+          "Erica"     "by my side"
+          "Rita"      "is all I need"
+          "Tina"      "is what I see"
+          "Sandra"    "in the sun"
+          "Mary"      "all night long"
+          "Jessica"   "here I am"
+          "you"       "makes me your man" }}
+{{ range $name, $what := $lyrics }}
+A little bit of {{ $name }} {{ $what }}
 {{ end }}

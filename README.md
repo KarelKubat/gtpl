@@ -6,11 +6,12 @@
   - [Example: examples/00-general.tpl](#example-examples00-generaltpl)
   - [Example: examples/01-types.tpl](#example-examples01-typestpl)
   - [Example: examples/02-arith.tpl](#example-examples02-arithtpl)
-  - [Example: examples/03-list.tpl](#example-examples03-listtpl)
-  - [Example: examples/04-mambo.tpl](#example-examples04-mambotpl)
+  - [Example: examples/03-strings.tpl](#example-examples03-stringstpl)
+  - [Example: examples/04-list.tpl](#example-examples04-listtpl)
   - [Example: examples/05-mambo.tpl](#example-examples05-mambotpl)
-  - [Example: examples/06-maps.tpl](#example-examples06-mapstpl)
-  - [Example: examples/07-fibo.tpl](#example-examples07-fibotpl)
+  - [Example: examples/06-mambo.tpl](#example-examples06-mambotpl)
+  - [Example: examples/07-maps.tpl](#example-examples07-mapstpl)
+  - [Example: examples/08-fibo.tpl](#example-examples08-fibotpl)
 - [Example: Generated SSH Configuration and a Ping Check](#example-generated-ssh-configuration-and-a-ping-check)
   - [Source of Truth](#source-of-truth)
   - [Generation of an SSH Configuration](#generation-of-an-ssh-configuration)
@@ -109,7 +110,7 @@ See also `examples/*tpl`.
     comments - you can't have spaces between the template and comment delimiters
 */}}
 
-{{ log "This generates" "one" "log statement" }}
+{{ log "This generates" 1 "log statement" }}
 This template is processed by {{ expander }} version {{ version }}
 
 {{ $answer := 42 }}
@@ -126,8 +127,8 @@ My homedir is {{ env "HOME" }}
 **Output** (empty lines removed):
 
 ```plain
-2023/04/17 12:59:57 gtpl: This generates one log statement
-This template is processed by gtpl version v1.0.2
+2023/04/17 13:19:31 gtpl: This generates 1 log statement
+This template is processed by gtpl version v1.0.3
 My homedir is /Users/karelk
 ```
 
@@ -213,7 +214,26 @@ My homedir is /Users/karelk
 12 / 3 = 4
 ```
 
-### Example: examples/03-list.tpl
+### Example: examples/03-strings.tpl
+
+```C
+{{/*
+  Demo of:
+    strcat - add elements into one string
+*/}}
+
+{{ $ans := 42 }}
+{{ $yrs := "7.5 million" }}
+{{ strcat "It took " $yrs " to come up with the number " $ans "." }}
+```
+
+**Output** (empty lines removed):
+
+```plain
+It took 7.5 million to come up with the number 42.
+```
+
+### Example: examples/04-list.tpl
 
 ```C
 {{/*
@@ -259,7 +279,7 @@ I've $got one two three four five senses working overtime.
   "five" is in the list
 ```
 
-### Example: examples/04-mambo.tpl
+### Example: examples/05-mambo.tpl
 
 ```C
 {{/*
@@ -299,7 +319,7 @@ A little bit of Tina is what I see
 A little bit of you makes me your man
 ```
 
-### Example: examples/05-mambo.tpl
+### Example: examples/06-mambo.tpl
 
 ```C
 {{/*
@@ -342,7 +362,7 @@ so that in-order traversal is guaranteed.
     A little bit of you makes me your man
 ```
 
-### Example: examples/06-maps.tpl
+### Example: examples/07-maps.tpl
 
 ```C
 
@@ -419,7 +439,7 @@ Name: Eve
   Attacker: true
 ```
 
-### Example: examples/07-fibo.tpl
+### Example: examples/08-fibo.tpl
 
 ```C
 {{/*
@@ -704,6 +724,9 @@ mul (longname: .Gtpl.Mul)
 
 setkeyval (longname: .Gtpl.SetKeyVal)
   {{ set $map "frog" "ribbit" }} - adds a key/value pair to a map
+
+strcat (longname: .Gtpl.Strcat)
+  {{ $all := strcat 12 " plus " 13 " is " 25 }}
 
 sub (longname: .Gtpl.Sub)
   42 - 2 = {{ sub 42 2}}
