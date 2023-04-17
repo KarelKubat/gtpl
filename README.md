@@ -8,8 +8,9 @@
   - [Example: examples/02-arith.tpl](#example-examples02-arithtpl)
   - [Example: examples/03-list.tpl](#example-examples03-listtpl)
   - [Example: examples/04-mambo.tpl](#example-examples04-mambotpl)
-  - [Example: examples/05-maps.tpl](#example-examples05-mapstpl)
-  - [Example: examples/06-fibo.tpl](#example-examples06-fibotpl)
+  - [Example: examples/05-mambo.tpl](#example-examples05-mambotpl)
+  - [Example: examples/06-maps.tpl](#example-examples06-mapstpl)
+  - [Example: examples/07-fibo.tpl](#example-examples07-fibotpl)
 - [Example: Generated SSH Configuration and a Ping Check](#example-generated-ssh-configuration-and-a-ping-check)
   - [Source of Truth](#source-of-truth)
   - [Generation of an SSH Configuration](#generation-of-an-ssh-configuration)
@@ -125,7 +126,7 @@ My homedir is {{ env "HOME" }}
 **Output** (empty lines removed):
 
 ```plain
-2023/04/15 15:13:22 gtpl: This generates one log statement
+2023/04/17 10:32:44 gtpl: This generates one log statement
 This template is processed by gtpl version 0.0.3
 My homedir is /Users/karelk
 ```
@@ -266,6 +267,9 @@ I've $got one two three four five senses working overtime.
         map   - creates a map
     Also standard built ins:
         range - ranging key,value pairs over a map
+
+Note that ranging over maps has an undefined order, which may be
+alphabetical by key, but that is not guaranteed.
 */}}
 
 {{ $lyrics := map
@@ -295,7 +299,50 @@ A little bit of Tina is what I see
 A little bit of you makes me your man
 ```
 
-### Example: examples/05-maps.tpl
+### Example: examples/05-mambo.tpl
+
+```C
+{{/*
+    Demo of:
+        list  - creates an array 
+        map   - creates a map
+    Also standard built ins:
+        range - ranging a list, or key,value pairs over a map
+
+In this example verses (which are maps) are contained in a list
+so that in-order traversal is guaranteed.
+*/}}
+
+{{ $lyrics := list
+          (map "Monica"    "in my life")
+          (map "Erica"     "by my side")
+          (map "Rita"      "is all I need")
+          (map "Tina"      "is what I see")
+          (map "Sandra"    "in the sun")
+          (map "Mary"      "all night long")
+          (map "Jessica"   "here I am")
+          (map "you"       "makes me your man") }}
+{{ range $verse := $lyrics }}
+  {{ range $name, $what := $verse }}
+    A little bit of {{ $name }} {{ $what }}
+  {{ end }}
+{{ end }}
+```
+
+**Output** (empty lines removed):
+
+```plain
+    A little bit of Monica in my life
+    A little bit of Erica by my side
+    A little bit of Rita is all I need
+    A little bit of Tina is what I see
+    A little bit of Sandra in the sun
+    A little bit of Mary all night long
+    A little bit of Jessica here I am
+    A little bit of you makes me your man
+```
+
+### Example: examples/06-maps.tpl
 
 ```C
 
@@ -372,7 +419,7 @@ Name: Eve
   Attacker: true
 ```
 
-### Example: examples/06-fibo.tpl
+### Example: examples/07-fibo.tpl
 
 ```C
 {{/*
