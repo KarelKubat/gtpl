@@ -24,9 +24,9 @@ for $srcfile (@sources) {
 
 die("gittag: cannot determine the code tag from $srcfile\n") if ($codetag eq "");
 print("gittag: codetag found in $srcfile is $codetag\n");
-# Require v.NR.NR.NR
+# Require vNR.NR.NR
 if ($codetag !~ m{v[0-9]+\.[0-9]+\.[0-9]+}) {
-    die("gittag: $codetag must follow the format v.NR.NR\n");
+    die("gittag: $codetag must follow the format vNR.NR\n");
 }
 
 my $gittag;
@@ -50,6 +50,15 @@ if ($gittag ne $codetag) {
         "        git tag -a $codetag -m 'tagged as $codetag'\n");
 }
 
-print("gittag: codetag and repository tag agree, don't forget to:\n",
-      "        git push origin\n",
-      "        git push origin $codetag\n");
+my @remotes;
+open(my $if, "git remote |") or die("gittag: cannot start `git remote`\n");
+while (my $line = <$if>) {
+    chomp($line);
+    push(@remotes, $line) if ($line ne "");
+}
+
+print("gittag: codetag and repository tag agree, don't forget to:\n");
+for my $remote (@remotes) {
+    print("  git push $remote\n",
+          "  git push $remote $codetag\n");
+}
