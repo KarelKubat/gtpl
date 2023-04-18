@@ -109,6 +109,9 @@ func (p *Processor) ProcessStreams(r io.Reader, w io.Writer) error {
 func (p *Processor) Overview() string {
 	out := ""
 	for _, b := range p.needle.Builtins() {
+		if b.Usage == "" {
+			continue
+		}
 		if p.o.AllowAliases {
 			out += fmt.Sprintf("%v (longname: %v.%v)\n", b.Alias, gtplNamePrefix, b.Name)
 		} else {

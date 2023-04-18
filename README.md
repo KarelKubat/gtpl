@@ -70,6 +70,8 @@ gtpl FILE1 FILE2 [FILE3...]
 `gtpl` also supports the filename `-` to indicate stdin; but to use it, you'll need the end-of-flags indicator `--`. Example:
 
 ```shell
+# --remove-empty-lines, abbreviated -re (because -r can mean two things)
+# avoids outputting empty lines.
 gtpl -re -- file1 file2 - file3
 ```
 
@@ -127,8 +129,8 @@ My homedir is {{ env "HOME" }}
 **Output** (empty lines removed):
 
 ```plain
-2023/04/17 13:19:31 gtpl: This generates 1 log statement
-This template is processed by gtpl version v1.0.3
+2023/04/18 15:50:55 gtpl: This generates 1 log statement
+This template is processed by gtpl version v1.0.4
 My homedir is /Users/karelk
 ```
 
@@ -144,6 +146,7 @@ My homedir is /Users/karelk
         isnumber  - true for floats or ints
         islist    - true for lists
         ismap     - true for maps
+        contains  - checks whether a map, list or string contains something
     Also standard built ins:
         range    - how to loop over a list
 */}}
@@ -172,6 +175,22 @@ My homedir is /Users/karelk
 42 is {{ if not (isnumber 42)}} not {{ end }} a number
 42 is {{ if not (islist 42)}} not {{ end }} a list
 42 is {{ if not (ismap 42)}} not {{ end }} a map
+
+Using "contains" with a string:
+  {{ $s := "All programs should print 'Hello World!'" }}
+  Does {{ $s }} contain "Hello"? {{ contains $s "Hello" }}
+  Does {{ $s }} contain "hello"? {{ contains $s "hello" }}
+
+Using "contains" with a list:
+  {{ $l := list "a" "b" "c" "d" }}
+  Does {{ $l }} contain "a"? {{ contains $l "a" }}
+  Does {{ $l }} contain "z"? {{ contains $l "z" }}
+
+Using "contains" with a map"
+  {{ $m := map "answer"           42 
+               "computation-time" "7.5 million years"}}
+  Does {{ $m }} contain "answer"? {{ contains $m "answer" }}
+  Does {{ $m }} contain "planet"? {{ contains $m "planet" }}
 ```
 
 **Output** (empty lines removed):
@@ -186,6 +205,15 @@ My homedir is /Users/karelk
 42 is  a number
 42 is  not  a list
 42 is  not  a map
+Using "contains" with a string:
+  Does All programs should print 'Hello World!' contain "Hello"? true
+  Does All programs should print 'Hello World!' contain "hello"? false
+Using "contains" with a list:
+  Does [a b c d] contain "a"? true
+  Does [a b c d] contain "z"? false
+Using "contains" with a map"
+  Does map[answer:42 computation-time:7.5 million years] contain "answer"? true
+  Does map[answer:42 computation-time:7.5 million years] contain "planet"? false
 ```
 
 ### Example: examples/02-arith.tpl
@@ -219,13 +247,17 @@ My homedir is /Users/karelk
 ```C
 {{/*
   Demo of:
-    strcat - add elements into one string
+    strcat   - add elements into one string
+    contains - `true` when a string contains a substring
 */}}
 
 {{ $ans := 42 }}
 {{ $yrs := "7.5 million" }}
-{{ strcat "It took " $yrs " to come up with the number " $ans "." }}
-```
+{{ $out := strcat "It took " $yrs " to come up with the number " $ans "." }}
+
+{{ $out }}
+
+{{ assert (contains $yrs "million") "assertion failure, quitting" }}```
 
 **Output** (empty lines removed):
 
@@ -240,7 +272,7 @@ It took 7.5 million to come up with the number 42.
     Demo of:
       list        - creates a list
       addelements - creates a new list by adding elements
-      haselement  - checks whether an element is in the list
+      contains    - checks whether an element is in the list
       indexof     - returns the index of an element
     Also standard built ins:
       len         - returns the length of a list
@@ -259,7 +291,7 @@ Let's add "four" and "five".
 {{ $list = addelements $list "four" "five" }}
 I've $got {{ range $sense := $list }}{{ $sense }} {{ end }}senses working overtime.
 
-{{ if (haselement $list "five") }}
+{{ if (contains $list "five") }}
   "five" is in the list
 {{ else }}
   "five" is not in the list (this would be an error)
@@ -369,7 +401,7 @@ so that in-order traversal is guaranteed.
 {{/*
     Demo of:
       map       - creates a map
-      haskey    - checks whether a key is in a map
+      contains  - checks whether a key is in a map
       setkeyval - adds a key/value pair to a map
       assert    - ensures that a condition is true
     Also standard built ins:
@@ -391,8 +423,8 @@ so that in-order traversal is guaranteed.
 {{ define "showParty" }}
   {{/* Ensure that the argument is a map with the keys role and isAttacker: */}}
   {{ assert (ismap .) "showParty: arg is not a map" }}
-  {{ assert (haskey . "role") "showParty: arg map doesn't have role key" }}
-  {{ assert (haskey . "isAttacker") "showParty: arg map doesn't have isAttacker key" }}
+  {{ assert (contains . "role") "showParty: arg map doesn't have role key" }}
+  {{ assert (contains . "isAttacker") "showParty: arg map doesn't have isAttacker key" }}
 
   {{/* 
     Since it's a valid and asserted map, we can `getval` from it and we'l get
@@ -407,14 +439,14 @@ Name: {{ $name }}
 {{ template "showParty" $data }}
 {{ end }}
 
-Alice {{ if haskey $parties "Alice" }} occurs {{ else }} doesn't occur {{ end }} in the map.
+Alice {{ if contains $parties "Alice" }} occurs {{ else }} doesn't occur {{ end }} in the map.
 
-{{ if not (haskey $parties "Eve") }}
+{{ if not (contains $parties "Eve") }}
 Eve is not listed as a party yet. Let's add her.
 {{ setkeyval $parties "Eve"
     (map "role" "another attacker"
                 "isAttacker" true) }}
-{{ assert (haskey $parties "Eve") "Eve must now be known as a party." }}
+{{ assert (contains $parties "Eve") "Eve must now be known as a party." }}
 {{ end }}
 Name: Eve
 {{ template "showParty" (getval $parties "Eve") }}
@@ -551,22 +583,22 @@ You can also find this as `examples/hosts/ssh-config`.
 #
 # {{ getval $h "description" }}
 # ------------------------------------------------------------------------
-Host {{ if haskey $h "shortname"}}{{ getval $h "shortname"}}{{ else }}{{ getval $h "hostname" }}{{ end }}
+Host {{ if contains $h "shortname"}}{{ getval $h "shortname"}}{{ else }}{{ getval $h "hostname" }}{{ end }}
     Hostname {{ getval $h "hostname" }}
-    {{ if haskey $h "user" }}User {{ getval $h "user" }}{{ end }}
+    {{ if contains $h "user" }}User {{ getval $h "user" }}{{ end }}
     Compression yes
     ControlMaster auto
     ControlPath ~/.ssh/ctrl-%C
     ControlPersist yes
     ServerAliveInterval 300
-{{ if haskey $h "idfile" }}
+{{ if contains $h "idfile" }}
     IdentityFile {{ getval $h "idfile" }}
     IdentitiesOnly yes
 {{ end }}
-{{ if haskey $h "hasX11" }}
+{{ if contains $h "hasX11" }}
     ForwardX11Trusted yes
 {{ end }}
-{{ if haskey $h "port" }}
+{{ if contains $h "port" }}
     Port {{ getval $h "port" }}
 {{ end }}
 {{ end }}
@@ -668,6 +700,10 @@ addelements (longname: .Gtpl.AddElements)
 assert (longname: .Gtpl.Assert)
   asserts a condition and stops if not met: {{ assert (len $list) gt 0) "list is empty!" }}
 
+contains (longname: .Gtpl.Contains)
+  true when a map contains a key, a slice contains an element, or a string a substring
+  {{ if contains $map "frog" }} .... {{ end }}
+
 die (longname: .Gtpl.Die)
   {{ die "some" "info" }} - prints args, logs them if logging was used, stops
 
@@ -682,12 +718,6 @@ expander (longname: .Gtpl.Expander)
 
 getval (longname: .Gtpl.GetVal)
   a cat says {{ get $map "cat" }} - gets a value from a map, "" if absent
-
-haselement (longname: .Gtpl.HasElement)
-  {{ if (haselement $list "a") }} 'a' occurs in the list {{ end }}
-
-haskey (longname: .Gtpl.HasKey)
-  {{ if haskey $map "cat" }} yes {{ else }} no {{ end }} - tests whether a key is in a map
 
 indexof (longname: .Gtpl.IndexOf)
   'a' occurs at index {{ indexof $list "a" }} in the list

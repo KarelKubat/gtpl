@@ -16,9 +16,6 @@ func TestDocStrings(t *testing.T) {
 		if strings.ToLower(b.Alias) != b.Alias {
 			t.Errorf("docstrings: shortname %q isn't all lowercase", b.Alias)
 		}
-		if b.Usage == "" {
-			t.Errorf("docstrings: function %q lacks usage", b.Name)
-		}
 	}
 }
 

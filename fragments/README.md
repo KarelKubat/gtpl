@@ -51,6 +51,8 @@ gtpl FILE1 FILE2 [FILE3...]
 `gtpl` also supports the filename `-` to indicate stdin; but to use it, you'll need the end-of-flags indicator `--`. Example:
 
 ```shell
+# --remove-empty-lines, abbreviated -re (because -r can mean two things)
+# avoids outputting empty lines.
 gtpl -re -- file1 file2 - file3
 ```
 

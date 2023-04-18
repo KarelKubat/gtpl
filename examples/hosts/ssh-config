@@ -8,22 +8,22 @@
 #
 # {{ getval $h "description" }}
 # ------------------------------------------------------------------------
-Host {{ if haskey $h "shortname"}}{{ getval $h "shortname"}}{{ else }}{{ getval $h "hostname" }}{{ end }}
+Host {{ if contains $h "shortname"}}{{ getval $h "shortname"}}{{ else }}{{ getval $h "hostname" }}{{ end }}
     Hostname {{ getval $h "hostname" }}
-    {{ if haskey $h "user" }}User {{ getval $h "user" }}{{ end }}
+    {{ if contains $h "user" }}User {{ getval $h "user" }}{{ end }}
     Compression yes
     ControlMaster auto
     ControlPath ~/.ssh/ctrl-%C
     ControlPersist yes
     ServerAliveInterval 300
-{{ if haskey $h "idfile" }}
+{{ if contains $h "idfile" }}
     IdentityFile {{ getval $h "idfile" }}
     IdentitiesOnly yes
 {{ end }}
-{{ if haskey $h "hasX11" }}
+{{ if contains $h "hasX11" }}
     ForwardX11Trusted yes
 {{ end }}
-{{ if haskey $h "port" }}
+{{ if contains $h "port" }}
     Port {{ getval $h "port" }}
 {{ end }}
 {{ end }}

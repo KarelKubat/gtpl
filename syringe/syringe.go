@@ -116,7 +116,6 @@ func New(o *Opts) *Syringe {
 			function: s.HasElement,
 			Name:     "HasElement",
 			Alias:    "haselement",
-			Usage:    `{{ if (haselement $list "a") }} 'a' occurs in the list {{ end }}`,
 		},
 		{
 			function: s.IndexOf,
@@ -142,7 +141,6 @@ func New(o *Opts) *Syringe {
 			function: s.HasKey,
 			Name:     "HasKey",
 			Alias:    "haskey",
-			Usage:    `{{ if haskey $map "cat" }} yes {{ else }} no {{ end }} - tests whether a key is in a map`,
 		},
 		{
 			function: s.GetVal,
@@ -194,6 +192,13 @@ func New(o *Opts) *Syringe {
 			Name:     "IsMap",
 			Alias:    "ismap",
 			Usage:    `true when its argument is a map`,
+		},
+		{
+			function: s.Contains,
+			Name:     "Contains",
+			Alias:    "contains",
+			Usage: `true when a map contains a key, a slice contains an element, or a string a substring` + "\n" +
+				`{{ if contains $map "frog" }} .... {{ end }}`,
 		},
 
 		// Arithmetic / misc
@@ -318,6 +323,7 @@ func (s *Syringe) List(args ...interface{}) []interface{} {
 }
 
 // HasElement is the builtin that checks whether a list contains an element.
+// Deprecated: use Contains.
 func (s *Syringe) HasElement(list []interface{}, el interface{}) bool {
 	for _, e := range list {
 		if e == el {
@@ -355,6 +361,7 @@ func (s *Syringe) Map(args ...interface{}) map[interface{}]interface{} {
 }
 
 // HasKey is the builtin that checks whether a map contains a key.
+// Deprecated: use Contains.
 func (s *Syringe) HasKey(m map[interface{}]interface{}, key interface{}) bool {
 	_, ok := m[key]
 	return ok
@@ -421,6 +428,42 @@ func (s *Syringe) IsList(i interface{}) bool {
 func (s *Syringe) IsMap(i interface{}) bool {
 	t, _ := s.Type(i)
 	return t == mapString
+}
+
+// Contains replaces HasElement or HasKey and offers substring matching.
+func (s *Syringe) Contains(haystack interface{}, needle interface{}) (bool, error) {
+	av := reflect.ValueOf(haystack)
+
+	switch av.Kind() {
+	case reflect.Map:
+		m, ok := haystack.(map[interface{}]interface{})
+		if !ok {
+			return false, fmt.Errorf("contains: failed to convert %v to a map", haystack)
+		}
+		_, ok = m[needle]
+		return ok, nil
+	case reflect.Slice, reflect.Array:
+		s, ok := haystack.([]interface{})
+		if !ok {
+			return false, fmt.Errorf("contains: failed to covert %v to a slice", haystack)
+		}
+		for _, e := range s {
+			if e == needle {
+				return true, nil
+			}
+		}
+		return false, nil
+	case reflect.String:
+		s, ok := haystack.(string)
+		if !ok {
+			return false, fmt.Errorf("contains: failed to convert %v to a string", haystack)
+		}
+		bv := fmt.Sprintf("%v", needle)
+		return strings.Contains(s, bv), nil
+	default:
+		return false, fmt.Errorf("contains: %v is neither a map, nor a slice, nor a string", haystack)
+	}
+	return false, fmt.Errorf("contains: internal jam at kind %v, type %v", av.Kind(), av.Type())
 }
 
 // Arithmetic.
