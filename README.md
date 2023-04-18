@@ -129,7 +129,7 @@ My homedir is {{ env "HOME" }}
 **Output** (empty lines removed):
 
 ```plain
-2023/04/18 15:51:53 gtpl: This generates 1 log statement
+2023/04/18 19:06:36 gtpl: This generates 1 log statement
 This template is processed by gtpl version v1.0.4
 My homedir is /Users/karelk
 ```
@@ -249,20 +249,25 @@ Using "contains" with a map"
   Demo of:
     strcat   - add elements into one string
     contains - `true` when a string contains a substring
+  Also standard built ins:
+    len      - returns the length of a string
+    index    - returns the ordinal number of the rune at a given index
 */}}
 
 {{ $ans := 42 }}
 {{ $yrs := "7.5 million" }}
 {{ $out := strcat "It took " $yrs " to come up with the number " $ans "." }}
 
-{{ $out }}
+"{{ $out }}" is {{ len $out }} runes long.
+The ordinal of the rune at position 12 is {{ index $out 12 }}.
 
 {{ assert (contains $yrs "million") "assertion failure, quitting" }}```
 
 **Output** (empty lines removed):
 
 ```plain
-It took 7.5 million to come up with the number 42.
+"It took 7.5 million to come up with the number 42." is 50 runes long.
+The ordinal of the rune at position 12 is 109.
 ```
 
 ### Example: examples/04-list.tpl
