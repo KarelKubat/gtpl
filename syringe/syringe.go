@@ -463,7 +463,6 @@ func (s *Syringe) Contains(haystack interface{}, needle interface{}) (bool, erro
 	default:
 		return false, fmt.Errorf("contains: %v is neither a map, nor a slice, nor a string", haystack)
 	}
-	return false, fmt.Errorf("contains: internal jam at kind %v, type %v", av.Kind(), av.Type())
 }
 
 // Arithmetic.

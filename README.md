@@ -129,7 +129,7 @@ My homedir is {{ env "HOME" }}
 **Output** (empty lines removed):
 
 ```plain
-2023/04/18 15:50:55 gtpl: This generates 1 log statement
+2023/04/18 15:51:53 gtpl: This generates 1 log statement
 This template is processed by gtpl version v1.0.4
 My homedir is /Users/karelk
 ```
