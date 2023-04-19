@@ -60,6 +60,5 @@ while (my $line = <$if>) {
 
 print("gittag: codetag and repository tag agree, don't forget to:\n");
 for my $remote (@remotes) {
-    print("  git push $remote\n",
-          "  git push $remote $codetag\n");
+    print("  git push $remote $codetag\n");
 }
