@@ -2,6 +2,7 @@
   Demo of:
     strcat   - add elements into one string
     contains - `true` when a string contains a substring
+    assert   - ensures a condition or exits
   Also standard built ins:
     len      - returns the length of a string
     index    - returns the ordinal number of the rune at a given index
