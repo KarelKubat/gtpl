@@ -6,13 +6,17 @@
   Also standard built ins:
     len      - returns the length of a string
     index    - returns the ordinal number of the rune at a given index
+    printf   - `fmt.Printf()` like expansion
 */}}
 
 {{ $ans := 42 }}
 {{ $yrs := "7.5 million" }}
 {{ $out := strcat "It took " $yrs " to come up with the number " $ans "." }}
-
 "{{ $out }}" is {{ len $out }} runes long.
 The ordinal of the rune at position 12 is {{ index $out 12 }}.
-
 {{ assert (contains $yrs "million") "assertion failure, quitting" }}
+
+{{/* NOTE: instead of strcat, the builtin printf can be used: */}}
+{{ $msg := printf "'%v' and '%v' are from the HHGttG." $ans $yrs }}
+{{ $msg }}
+
