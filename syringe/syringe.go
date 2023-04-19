@@ -104,6 +104,12 @@ func New(o *Opts) *Syringe {
 			Alias:    "strcat",
 			Usage:    `{{ $all := strcat 12 " plus " 13 " is " 25 }}`,
 		},
+		{
+			function: s.AddByte,
+			Name:     "AddByte",
+			Alias:    "addbyte",
+			Usage:    `Add a '!': {{ $s := "Hello World" }} {{ $s = addbyte $s 33 }}`,
+		},
 
 		// Lists
 		{
@@ -313,6 +319,24 @@ func (s *Syringe) Strcat(args ...interface{}) string {
 		out += fmt.Sprintf("%v", a)
 	}
 	return out
+}
+
+// AddByte adds a byte to a string and returns the expanded string.
+func (s *Syringe) AddByte(str string, val interface{}) (string, error) {
+	var bt byte
+	vk := reflect.ValueOf(val)
+	switch vk.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		bt = byte(vk.Int())
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		bt = byte(vk.Uint())
+	default:
+		return "", fmt.Errorf("addbyte: unsupported type for %q (%T), only integers allowed", vk, val)
+	}
+
+	bytes := []byte(str)
+	bytes = append(bytes, byte(bt))
+	return string(bytes), nil
 }
 
 /* List related */
