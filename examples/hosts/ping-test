@@ -1,0 +1,9 @@
+{{/* Ping test for hosts. */}}
+
+{{/* Use as follows:
+    gtpl -re hosts ping-test | sh
+*/}}
+
+{{ range $h := $hosts }}
+ping -c3 -t3 {{ getval $h "hostname" }} >/dev/null 2>&1 || echo {{ getval $h "hostname" }} is unreachable!
+{{ end }}

@@ -1,0 +1,26 @@
+{{/* Configuration of ssh-able hosts */}}
+
+{{
+    $hosts := list
+        (map "description"   "My computer at work"
+             "hostname"      "ws12345.example.com"
+             "shortname"     "ws"
+             "user"          "user12345"
+             "idfile"        "/home/user/.ssh/specific_id_rsa_file"
+             "hasX11"        true)
+
+        (map "description"   "Bastion, emergency access from outside"
+             "hostname"      "123.456.789.012"
+             "shortname"     "bastion"
+             "user"          "emergency"
+             "port"          2222)
+
+        (map "description"   "Office DHCP/Router"
+             "hostname"      "192.168.1.1"
+             "user"          "pi")
+
+        (map "description"   "Raspberry Pi DNS/Blackhole"
+             "hostname"      "192.168.1.10"
+             "shortname"     "pi"
+             "user"          "pi")
+}}
